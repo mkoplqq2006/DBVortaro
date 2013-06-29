@@ -1,0 +1,15 @@
+E:\Vortaro\VortaroModel\bin\Debug\VortaroModel.dll
+E:\Vortaro\VortaroModel\bin\Debug\VortaroModel.pdb
+E:\Vortaro\VortaroModel\obj\Debug\ResolveAssemblyReference.cache
+E:\Vortaro\VortaroModel\obj\Debug\VortaroModel.dll
+E:\Vortaro\VortaroModel\obj\Debug\VortaroModel.pdb
+E:\2013项目\Vortaro\VortaroModel\bin\Debug\VortaroModel.dll
+E:\2013项目\Vortaro\VortaroModel\bin\Debug\VortaroModel.pdb
+E:\2013项目\Vortaro\VortaroModel\obj\Debug\ResolveAssemblyReference.cache
+E:\2013项目\Vortaro\VortaroModel\obj\Debug\VortaroModel.dll
+E:\2013项目\Vortaro\VortaroModel\obj\Debug\VortaroModel.pdb
+E:\DBVortaro\VortaroModel\bin\Debug\VortaroModel.dll
+E:\DBVortaro\VortaroModel\bin\Debug\VortaroModel.pdb
+E:\DBVortaro\VortaroModel\obj\Debug\ResolveAssemblyReference.cache
+E:\DBVortaro\VortaroModel\obj\Debug\VortaroModel.dll
+E:\DBVortaro\VortaroModel\obj\Debug\VortaroModel.pdb

@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="VortaroModel" namespace="VortaroModel">
+  <!--项目-->
+  <class name="VortaroModel.Project,VortaroModel" table="Z_Project" lazy="false">
+    <id column="Code" name="Code">
+      <generator class="assigned" />
+    </id>
+    <property name="Id" column="Id" insert="false" update="false"/>
+    <property name="Name" column="Name" />
+    <property name="Bewrite" column="Bewrite" />
+    <property name="Author" column="Author" />
+    <property name="CreateTime" column="CreateTime" insert="false" update="false"/>
+  </class>
+  <!--功能分组-->
+  <class name="VortaroModel.Group,VortaroModel" table="Z_Group" lazy="false">
+    <id column="Code" name="Code">
+      <generator class="assigned" />
+    </id>
+    <property name="Id" column="Id" insert="false" update="false"/>
+    <property name="ProjectCode" column="ProjectCode" />
+    <property name="Name" column="Name" />
+    <property name="Bewrite" column="Bewrite" />
+    <property name="Author" column="Author" />
+    <property name="CreateTime" column="CreateTime" insert="false" update="false"/>
+  </class>
+  <!--数据库-->
+  <class name="VortaroModel.Database,VortaroModel" table="Z_Database" lazy="false">
+    <id column="Code" name="Code">
+      <generator class="assigned" />
+    </id>
+    <property name="Id" column="Id" insert="false" update="false"/>
+    <property name="ProjectCode" column="ProjectCode" />
+    <property name="Name" column="Name" />
+    <property name="Alias" column="Alias" />
+    <property name="Type" column="Type" />
+    <property name="ServerName" column="ServerName" />
+    <property name="ServerUser" column="ServerUser" />
+    <property name="ServerPwd" column="ServerPwd" />
+    <property name="Bewrite" column="Bewrite" />
+    <property name="Author" column="Author" />
+    <property name="CreateTime" column="CreateTime" insert="false" update="false"/>
+  </class>
+  <!--表信息-->
+  <class name="VortaroModel.Tables,VortaroModel" table="Z_Tables" lazy="false">
+    <id column="Code" name="Code">
+      <generator class="assigned" />
+    </id>
+    <property name="Id" column="Id" insert="false" update="false"/>
+    <property name="DatabaseCode" column="DatabaseCode" />
+    <property name="GroupCode" column="GroupCode" />
+    <property name="Name" column="Name" />
+    <property name="Alias" column="Alias" />
+    <property name="Author" column="Author" />
+    <property name="CreateTime" column="CreateTime" insert="false" update="false"/>
+  </class>
+  <!--列字段信息-->
+  <class name="VortaroModel.Column,VortaroModel" table="Z_Column" lazy="false">
+    <id column="Code" name="Code">
+      <generator class="assigned" />
+    </id>
+    <property name="Id" column="Id" insert="false" update="false"/>
+    <property name="TablesCode" column="TablesCode" />
+    <property name="Owner" column="Owner" />
+    <property name="Name" column="Name" />
+    <property name="Type" column="Type" />
+    <property name="Bewrite" column="Bewrite" />
+    <property name="Author" column="Author" />
+    <property name="CreateTime" column="CreateTime" insert="false" update="false"/>
+    <property name="FieldState" column="FieldState" />
+    <property name="HideAuthor" column="HideAuthor" />
+    <property name="HideTime" column="HideTime" />
+  </class>
+  <!-- SQL操作 -->
+  <!--<sql-query name="getGet">
+    <![CDATA[
+        
+      ]]>
+  </sql-query>-->
+</hibernate-mapping>

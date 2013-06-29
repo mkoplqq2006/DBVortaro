@@ -1,0 +1,9 @@
+﻿/*tabs 圆角样式*/
+.tabs-header {
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+}
+.tabs-panels {
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
