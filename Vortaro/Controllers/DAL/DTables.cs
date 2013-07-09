@@ -23,43 +23,48 @@ namespace Vortaro.Controllers.DAL
         /// <returns></returns>
         public static string GetPageTables(int start, int pageSize, string query, string databaseCode, string groupCode)
         {
-            ISession session = null;
-            try
+             //获得当前运行的NHibernate实例
+            ISession session = NHibernateHelper.GetCurrentSession();
+            //事务开始
+            using (ITransaction transaction = session.BeginTransaction())
             {
-                //获得当前运行的NHibernate实例
-                session = NHibernateHelper.GetCurrentSession();
-                //事务开始
-                ITransaction transaction = session.BeginTransaction();
-                ICriteria criteria = session.CreateCriteria<Tables>();
-                if (!String.IsNullOrEmpty(query))
+                IList<Tables> list = null;//分页的记录
+                int count = 0;//总的记录条数
+                try
                 {
-                    criteria.Add(Expression.Or(Expression.Like("Name", "%" + query + "%"), Expression.Like("Alias", "%" + query + "%")));
+                    ICriteria criteria = session.CreateCriteria<Tables>();
+                    if (databaseCode == "" || groupCode == "")
+                    {
+                        count = 0;
+                        list = null;
+                    }
+                    else
+                    {
+                        criteria.Add(Expression.Eq("DatabaseCode", new Guid(databaseCode)));
+                        criteria.Add(Expression.Eq("GroupCode", new Guid(groupCode)));
+                        if (!String.IsNullOrEmpty(query))
+                        {
+                            criteria.Add(Expression.Or(Expression.Like("Name", "%" + query + "%"), Expression.Like("Alias", "%" + query + "%")));
+                        }
+                        count = criteria.List<Tables>().Count;
+                        list = criteria.SetFirstResult(start).SetMaxResults(pageSize).AddOrder(Order.Desc("Id")).List<Tables>();
+                    }
+                    //提交事务
+                    transaction.Commit();
                 }
-                if (!String.IsNullOrEmpty(databaseCode))
+                catch (Exception ex)
                 {
-                    criteria.Add(Expression.Eq("DatabaseCode", new Guid(databaseCode)));
+                    NHibernateHelper.WriteErrorLog("分页得到表字段信息", ex);
+                    throw;
                 }
-                if (!String.IsNullOrEmpty(groupCode))
+                finally
                 {
-                    criteria.Add(Expression.Eq("GroupCode", new Guid(groupCode)));
+                    session.Close();
                 }
-                IList<Tables> list = criteria.SetFirstResult(start).SetMaxResults(pageSize).AddOrder(Order.Desc("Id")).List<Tables>();
-                int count = criteria.List<Tables>().Count;
-                //提交事务
-                transaction.Commit();
                 Hashtable hasTable = new Hashtable();
-                hasTable.Add("total", list.Count);
+                hasTable.Add("total", count);
                 hasTable.Add("rows", list);
                 return JsonHelper.ToJson(hasTable);
-            }
-            catch (Exception ex)
-            {
-                NHibernateHelper.WriteErrorLog("分页得到表字段信息", ex);
-                throw;
-            }
-            finally
-            {
-                session.Close();
             }
         }
         /// <summary>

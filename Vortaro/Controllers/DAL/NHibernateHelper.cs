@@ -14,20 +14,24 @@ namespace Vortaro.Controllers.DAL
     /// </summary>
     public class NHibernateHelper
     {
-        private static readonly ISessionFactory SessionFactory;
-        public static readonly ILog loginfo;   //选择<logger name="loginfo">的配置
-        public static readonly ILog logerror;   //选择<logger name="logerror">的配置
+        private static readonly ISessionFactory SessionFactory = null;
+        public static readonly ILog logerror = null;   //选择<logger name="logerror">的配置
         private static byte[] Keys = { 0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0xEF };//DES密钥向量
         private static byte[] Keys2 = { 0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0xEF, 0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0xEF };//AES密钥向量
 
         static NHibernateHelper()
         {
-            loginfo = LogManager.GetLogger("loginfo");
-            logerror = LogManager.GetLogger("logerror");
-            SetConfig();
-            Configuration cfg = new Configuration();
-            cfg.AddAssembly("VortaroModel");
-            SessionFactory = cfg.BuildSessionFactory();
+            if (logerror == null)
+            {
+                logerror = LogManager.GetLogger("logerror");
+                SetConfig();
+            }
+            if (SessionFactory == null)
+            {
+                Configuration cfg = new Configuration();
+                cfg.AddAssembly("VortaroModel");
+                SessionFactory = cfg.BuildSessionFactory();
+            }
         }
         /// <summary>
         /// 获得当前NHibernate实例
@@ -60,13 +64,6 @@ namespace Vortaro.Controllers.DAL
         public static void SetConfig(FileInfo configFile)
         {
             XmlConfigurator.Configure(configFile);
-        }
-        public static void WriteLog(string info)
-        {
-            if (loginfo.IsInfoEnabled)
-            {
-                loginfo.Info(info);
-            }
         }
         public static void WriteErrorLog(string info)
         {

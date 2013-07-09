@@ -253,6 +253,8 @@ $(document).ready(function(){
 					groupCode:groupCode,
 					query:query
 				});
+				//清空字段grid
+				$('#dg-Column').datagrid('loadData', { total: 0, rows: [] });
 			}
 		}
 	});
@@ -352,17 +354,6 @@ $(document).ready(function(){
 			ServerName=rowData.ServerName;
 			ServerUser=rowData.ServerUser;
 			ServerPwd=rowData.ServerPwd;
-			//加载表grid
-			var tablesGrid = $('#dg-Tables').datagrid('load',{
-				databaseCode:databaseCode,
-				groupCode:groupCode,
-				query:query
-			});
-			//字段grid
-			$('#dg-Column').datagrid('load',{
-				tablesCode:tablesCode,
-				query:query
-			});
 			if(groupCode != ''){
 				$('#tabs-Project').tabs('enableTab', 3);
 				//表grid
@@ -371,6 +362,8 @@ $(document).ready(function(){
 					groupCode:groupCode,
 					query:query
 				});
+				//清空字段grid
+				$('#dg-Column').datagrid('loadData', { total: 0, rows: [] });
 			}
 		}
 	});

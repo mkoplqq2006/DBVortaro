@@ -22,36 +22,39 @@ namespace Vortaro.Controllers.DAL
         /// <returns></returns>
         public static string GetPageProject(int start, int pageSize, string query, string userName)
         {
-            ISession session = null;
-            try
+            //获得当前运行的NHibernate实例
+            ISession session = NHibernateHelper.GetCurrentSession();
+            //事务开始
+            using (ITransaction transaction = session.BeginTransaction())
             {
-                //获得当前运行的NHibernate实例
-                session = NHibernateHelper.GetCurrentSession();
-                //事务开始
-                ITransaction transaction = session.BeginTransaction();
-                ICriteria criteria = session.CreateCriteria<Project>();
-                criteria.Add(Expression.Eq("Author", userName));
-                if (!String.IsNullOrEmpty(query))
+                IList<Project> list = null;//分页的记录
+                int count = 0;//总的记录条数
+                try
                 {
-                    criteria.Add(Expression.Or(Expression.Like("Name", "%" + query + "%"), Expression.Like("Bewrite", "%" + query + "%")));
+                    ICriteria criteria = session.CreateCriteria<Project>();
+                    criteria.Add(Expression.Eq("Author", userName));
+                    if (!String.IsNullOrEmpty(query))
+                    {
+                        criteria.Add(Expression.Or(Expression.Like("Name", "%" + query + "%"), Expression.Like("Bewrite", "%" + query + "%")));
+                    }
+                    count = criteria.List<Project>().Count;
+                    list = criteria.SetFirstResult(start).SetMaxResults(pageSize).AddOrder(Order.Desc("Id")).List<Project>();
+                    //提交事务
+                    transaction.Commit();
                 }
-                IList<Project> list = criteria.SetFirstResult(start).SetMaxResults(pageSize).AddOrder(Order.Desc("Id")).List<Project>();
-                int count = criteria.List<Project>().Count;
-                //提交事务
-                transaction.Commit();
+                catch (Exception ex)
+                {
+                    NHibernateHelper.WriteErrorLog("分页得到项目信息", ex);
+                    throw;
+                }
+                finally
+                {
+                    session.Close();
+                }
                 Hashtable hasTable = new Hashtable();
-                hasTable.Add("total", list.Count);
+                hasTable.Add("total", count);
                 hasTable.Add("rows", list);
                 return JsonHelper.ToJson(hasTable);
-            }
-            catch (Exception ex)
-            {
-                NHibernateHelper.WriteErrorLog("分页得到项目信息", ex);
-                throw;
-            }
-            finally
-            {
-                session.Close();
             }
         }
     }

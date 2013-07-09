@@ -15,18 +15,18 @@ namespace Vortaro.Controllers.DAL
         /// <returns></returns>
         public static T Add(T entity)
         {
-            ISession session = null;
+            ISession session = NHibernateHelper.GetCurrentSession();
+            ITransaction transaction = session.BeginTransaction();
             try
             {
-                session = NHibernateHelper.GetCurrentSession();
-                ITransaction transaction = session.BeginTransaction();
                 session.Save(entity);
                 transaction.Commit();
                 return entity;
             }
             catch (Exception ex)
             {
-                NHibernateHelper.WriteErrorLog("执行添加操作", ex);
+                transaction.Rollback();
+                NHibernateHelper.WriteErrorLog("NHibernate执行添加操作", ex);
                 throw null;
             }
             finally
@@ -41,18 +41,18 @@ namespace Vortaro.Controllers.DAL
         /// <returns></returns>
         public static T GetProjectById(Guid code)
         {
-            ISession session = null;
+            ISession session = NHibernateHelper.GetCurrentSession();
+            ITransaction transaction = session.BeginTransaction();
             try
             {
-                session = NHibernateHelper.GetCurrentSession();
-                ITransaction transaction = session.BeginTransaction();
                 T entity = session.Load<T>(code);
                 transaction.Commit();
                 return entity;
             }
             catch (Exception ex)
             {
-                NHibernateHelper.WriteErrorLog("通过编号获得单个对象", ex);
+                transaction.Rollback();
+                NHibernateHelper.WriteErrorLog("NHibernate通过编号获得单个对象", ex);
                 throw null;
             }
             finally
@@ -67,18 +67,18 @@ namespace Vortaro.Controllers.DAL
         /// <returns></returns>
         public static T Update(T entity)
         {
-            ISession session = null;
+            ISession session = NHibernateHelper.GetCurrentSession();
+            ITransaction transaction = session.BeginTransaction();
             try
             {
-                session = NHibernateHelper.GetCurrentSession();
-                ITransaction transaction = session.BeginTransaction();
                 session.SaveOrUpdate(entity);
                 transaction.Commit();
                 return entity;
             }
             catch (Exception ex)
             {
-                NHibernateHelper.WriteErrorLog("执行更新操作", ex);
+                transaction.Rollback();
+                NHibernateHelper.WriteErrorLog("NHibernate执行更新操作", ex);
                 throw null;
             }
             finally
@@ -93,22 +93,23 @@ namespace Vortaro.Controllers.DAL
         /// <returns></returns>
         public static T Delete(Guid code)
         {
-            ISession session = null;
+            ISession session = NHibernateHelper.GetCurrentSession();
+            ITransaction transaction = session.BeginTransaction();
             try
             {
                 T entity = GetProjectById(code);
-                session = NHibernateHelper.GetCurrentSession();
-                ITransaction transaction = session.BeginTransaction();
                 if (entity != null)
                 {
                     session.Delete(entity);
                 }
+                session.Flush();
                 transaction.Commit();
                 return entity;
             }
             catch (Exception ex)
             {
-                NHibernateHelper.WriteErrorLog("执行删除操作", ex);
+                transaction.Rollback();
+                NHibernateHelper.WriteErrorLog("NHibernate执行删除操作", ex);
                 throw null;
             }
             finally
