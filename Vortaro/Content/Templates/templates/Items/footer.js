@@ -7,7 +7,7 @@
                 $string = $helpers.$string,
                 copyright = $data.copyright,
                 $out = '';
-            $out += '<div style="text-align:center;height:50px;"> 作者：';
+            $out += '<div style="text-align:center;height:50px;"> ';
             $out += $escape($string(copyright));
             $out += ' </div>';
             return new String($out)

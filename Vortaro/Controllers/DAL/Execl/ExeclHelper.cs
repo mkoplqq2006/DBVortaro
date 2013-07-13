@@ -48,16 +48,16 @@ namespace Vortaro.Controllers.DAL.Execl
             #region 右击文件 属性信息
             {
                 DocumentSummaryInformation dsi = PropertySetFactory.CreateDocumentSummaryInformation();
-                dsi.Company = "http://www.yongfa365.com/";
+                dsi.Company = "http://www.zdbko.com/";
                 workbook.DocumentSummaryInformation = dsi;
 
                 SummaryInformation si = PropertySetFactory.CreateSummaryInformation();
-                si.Author = "lemsun"; //填加xls文件作者信息   
+                si.Author = "DBVortaro"; //填加xls文件作者信息   
                 si.ApplicationName = "报表导出"; //填加xls文件创建程序信息   
-                si.LastAuthor = "lemsun"; //填加xls文件最后保存者信息   
+                si.LastAuthor = "DBVortaro"; //填加xls文件最后保存者信息   
                 si.Comments = "说明信息"; //填加xls文件作者信息   
-                si.Title = "lemsun"; //填加xls文件标题信息   
-                si.Subject = "lemsun";//填加文件主题信息   
+                si.Title = "DBVortaro"; //填加xls文件标题信息   
+                si.Subject = "DBVortaro";//填加文件主题信息   
                 si.CreateDateTime = DateTime.Now;
                 workbook.SummaryInformation = si;
             }

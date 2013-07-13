@@ -182,7 +182,7 @@ namespace Vortaro.Controllers
                 tableStr += "</table><br />";
             }
             string[] indexTemp = new string[] { "@title", "@table", "@footer" };
-            string[] indexHtml = new string[] { fileName, tableStr, "作者：张德兵" };
+            string[] indexHtml = new string[] { fileName, tableStr, "DBVortaro" };
             DTemplates.WriteHtml(indexTemp, indexHtml, indexPath, directory + "/index.html");
         }
         /// <summary>
@@ -203,11 +203,11 @@ namespace Vortaro.Controllers
             {
                 tableStr += string.Format(@"<tr><td style=""padding-left:10px;"">{0}</td>
                 <td>{1}</td><td>{2}</td><td>{3}</td><td class=""text-center"">{4}</td><td class=""text-center"">{5}</td></tr>",
-                k+1,columnlist[k].Name,columnlist[k].Type,columnlist[k].Bewrite,columnlist[k].Author,columnlist[k].CreateTime);
+                k + 1, columnlist[k].Name, columnlist[k].Type, columnlist[k].Bewrite, columnlist[k].Author, columnlist[k].CreateTime.ToString("yyyy年MM月dd日 HH:mm:ss"));
             }
             tableStr += "</table>";
             string[] itemsTemp = new string[] { "@title", "@name", "@alias", "@table", "@footer" };
-            string[] itemsHtml = new string[] { tableAlias, tableName, tableAlias, tableStr, "作者：张德兵" };
+            string[] itemsHtml = new string[] { tableAlias, tableName, tableAlias, tableStr, "DBVortaro" };
             DTemplates.WriteHtml(itemsTemp, itemsHtml, itemsPath, directory);
         }
         #endregion
@@ -246,7 +246,7 @@ namespace Vortaro.Controllers
             IList<Database> databaselist = DDatabase.GetDatabase(new Guid(Params["projectCode"].ToString()));
             StringBuilder Json = new StringBuilder();
             Json.Append("{ projectName: '" + Params["projectName"] + "',");
-            Json.Append("copyright:'张德兵',");
+            Json.Append("copyright:'DBVortaro',");
             Json.Append("time: '" + DateTime.Now.ToString("yyyy年MM月dd日") + "',list: [");
             for (int i = 0; i < databaselist.Count;i++ )
             {
@@ -280,7 +280,7 @@ namespace Vortaro.Controllers
             StringBuilder Json = new StringBuilder();
             Json.Append("{ Name: '" + tables.Name + "',");//表名
             Json.Append("Alias:'"+ tables.Alias +"',");//别名
-            Json.Append("copyright:'张德兵',");
+            Json.Append("copyright:'DBVortaro',");
             Json.Append("list: [");
             for (int i = 0; i < columnlist.Count; i++)
             {
@@ -289,7 +289,7 @@ namespace Vortaro.Controllers
                 Json.Append("Type: '" + columnlist[i].Type + "',");
                 Json.Append("Bewrite: '" + columnlist[i].Bewrite + "',");
                 Json.Append("Author: '" + columnlist[i].Author + "',");
-                Json.Append("CreateTime: '" + columnlist[i].CreateTime + "'");
+                Json.Append("CreateTime: '" + columnlist[i].CreateTime.ToString("yyyy年MM月dd日 HH:mm:ss") + "'");
                 Json.Append("}");
             }
             Json.Append("]}");
