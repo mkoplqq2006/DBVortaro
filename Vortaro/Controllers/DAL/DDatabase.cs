@@ -24,46 +24,44 @@ namespace Vortaro.Controllers.DAL
         public static string GetPageDatabase(int start, int pageSize, string query, string projectCode)
         {
             //获得当前运行的NHibernate实例
-            ISession session = NHibernateHelper.GetCurrentSession();
-            //事务开始
-            using (ITransaction transaction = session.BeginTransaction())
+            using (ISession session = NHibernateHelper.GetCurrentSession())
             {
-                IList<Database> list = null;//分页的记录
-                int count = 0;//总的记录条数
-                try
+                //事务开始
+                using (ITransaction transaction = session.BeginTransaction())
                 {
-                    ICriteria criteria = session.CreateCriteria<Database>();
-                    if (projectCode == "")
+                    IList<Database> list = null;//分页的记录
+                    int count = 0;//总的记录条数
+                    try
                     {
-                        count = 0;
-                        list = null;
-                    }
-                    else
-                    {
-                        criteria.Add(Expression.Eq("ProjectCode", new Guid(projectCode)));
-                        if (!String.IsNullOrEmpty(query))
+                        ICriteria criteria = session.CreateCriteria<Database>();
+                        if (projectCode == "")
                         {
-                            criteria.Add(Expression.Or(Expression.Like("Name", "%" + query + "%"), Expression.Like("Alias", "%" + query + "%")));
+                            count = 0;
+                            list = null;
                         }
-                        count = criteria.List<Database>().Count;
-                        list = criteria.SetFirstResult(start).SetMaxResults(pageSize).AddOrder(Order.Desc("Id")).List<Database>();
+                        else
+                        {
+                            criteria.Add(Expression.Eq("ProjectCode", new Guid(projectCode)));
+                            if (!String.IsNullOrEmpty(query))
+                            {
+                                criteria.Add(Expression.Or(Expression.Like("Name", "%" + query + "%"), Expression.Like("Alias", "%" + query + "%")));
+                            }
+                            count = criteria.SetCacheable(true).List<Database>().Count;
+                            list = criteria.SetCacheable(true).SetFirstResult(start).SetMaxResults(pageSize).AddOrder(Order.Desc("Id")).List<Database>();
+                        }
+                        //提交事务
+                        transaction.Commit();
                     }
-                    //提交事务
-                    transaction.Commit();
+                    catch (Exception ex)
+                    {
+                        NHibernateHelper.WriteErrorLog("分页得到数据库信息", ex);
+                        throw;
+                    }
+                    Hashtable hasTable = new Hashtable();
+                    hasTable.Add("total", count);
+                    hasTable.Add("rows", list);
+                    return JsonHelper.ToJson(hasTable);
                 }
-                catch (Exception ex)
-                {
-                    NHibernateHelper.WriteErrorLog("分页得到数据库信息", ex);
-                    throw;
-                }
-                finally
-                {
-                    session.Close();
-                }
-                Hashtable hasTable = new Hashtable();
-                hasTable.Add("total", count);
-                hasTable.Add("rows", list);
-                return JsonHelper.ToJson(hasTable);
             }
         }
         /// <summary>
@@ -73,29 +71,25 @@ namespace Vortaro.Controllers.DAL
         /// <returns></returns>
         public static IList<Database> GetDatabase(Guid projectCode) 
         {
-            ISession session = null;
             try
             {
                 //获得当前运行的NHibernate实例
-                session = NHibernateHelper.GetCurrentSession();
-                //事务开始
-                ITransaction transaction = session.BeginTransaction();
-                ICriteria criteria = session.CreateCriteria<Database>();
-                criteria.Add(Expression.Eq("ProjectCode", projectCode));
-                IList<Database> list = criteria.AddOrder(Order.Desc("Id")).List<Database>();
-                int count = criteria.List<Database>().Count;
-                //提交事务
-                transaction.Commit();
-                return list;
+                using (ISession session = NHibernateHelper.GetCurrentSession())
+                {
+                    //事务开始
+                    ITransaction transaction = session.BeginTransaction();
+                    ICriteria criteria = session.CreateCriteria<Database>();
+                    criteria.Add(Expression.Eq("ProjectCode", projectCode));
+                    IList<Database> list = criteria.SetCacheable(true).AddOrder(Order.Desc("Id")).List<Database>();
+                    //提交事务
+                    transaction.Commit();
+                    return list;
+                }
             }
             catch (Exception ex)
             {
                 NHibernateHelper.WriteErrorLog("根据项目编码，获取数据库", ex);
                 throw;
-            }
-            finally
-            {
-                session.Close();
             }
         }
     }

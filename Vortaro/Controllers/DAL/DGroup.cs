@@ -23,46 +23,48 @@ namespace Vortaro.Controllers.DAL
         public static string GetPageGroup(int start, int pageSize, string query, string projectCode)
         {
             //获得当前运行的NHibernate实例
-            ISession session = NHibernateHelper.GetCurrentSession();
-            //事务开始
-            using (ITransaction transaction = session.BeginTransaction())
+            using (ISession session = NHibernateHelper.GetCurrentSession())
             {
-                IList<Group> list = null;//分页的记录
-                int count = 0;//总的记录条数
-                try
+                //事务开始
+                using (ITransaction transaction = session.BeginTransaction())
                 {
-                    ICriteria criteria = session.CreateCriteria<Group>();
-                    if (projectCode == "")
+                    IList<Group> list = null;//分页的记录
+                    int count = 0;//总的记录条数
+                    try
                     {
-                        count = 0;
-                        list = null;
-                    }
-                    else
-                    {
-                        criteria.Add(Expression.Eq("ProjectCode", new Guid(projectCode)));
-                        if (!String.IsNullOrEmpty(query))
+                        ICriteria criteria = session.CreateCriteria<Group>();
+                        if (projectCode == "")
                         {
-                            criteria.Add(Expression.Like("Name", "%" + query + "%"));
+                            count = 0;
+                            list = null;
                         }
-                        count = criteria.List<Group>().Count;
-                        list = criteria.SetFirstResult(start).SetMaxResults(pageSize).AddOrder(Order.Desc("Id")).List<Group>();
+                        else
+                        {
+                            criteria.Add(Expression.Eq("ProjectCode", new Guid(projectCode)));
+                            if (!String.IsNullOrEmpty(query))
+                            {
+                                criteria.Add(Expression.Like("Name", "%" + query + "%"));
+                            }
+                            count = criteria.SetCacheable(true).List<Group>().Count;
+                            list = criteria.SetCacheable(true).SetFirstResult(start).SetMaxResults(pageSize).AddOrder(Order.Desc("Id")).List<Group>();
+                        }
+                        //提交事务
+                        transaction.Commit();
                     }
-                    //提交事务
-                    transaction.Commit();
+                    catch (Exception ex)
+                    {
+                        NHibernateHelper.WriteErrorLog("分页得到功能分组信息", ex);
+                        throw;
+                    }
+                    finally
+                    {
+                        session.Close();
+                    }
+                    Hashtable hasTable = new Hashtable();
+                    hasTable.Add("total", count);
+                    hasTable.Add("rows", list);
+                    return JsonHelper.ToJson(hasTable);
                 }
-                catch (Exception ex)
-                {
-                    NHibernateHelper.WriteErrorLog("分页得到功能分组信息", ex);
-                    throw;
-                }
-                finally
-                {
-                    session.Close();
-                }
-                Hashtable hasTable = new Hashtable();
-                hasTable.Add("total", count);
-                hasTable.Add("rows", list);
-                return JsonHelper.ToJson(hasTable);
             }
         }
         /// <summary>
@@ -72,28 +74,25 @@ namespace Vortaro.Controllers.DAL
         /// <returns></returns>
         public static string GetGroupName(Guid? Code) 
         {
-            ISession session = null;
             try
             {
                 //获得当前运行的NHibernate实例
-                session = NHibernateHelper.GetCurrentSession();
-                //事务开始
-                ITransaction transaction = session.BeginTransaction();
-                ICriteria criteria = session.CreateCriteria<Group>();
-                criteria.Add(Expression.Eq("Code", Code));
-                IList<Group> list = criteria.List<Group>();
-                //提交事务
-                transaction.Commit();
-                return list[0].Name;
+                using (ISession session = NHibernateHelper.GetCurrentSession())
+                {
+                    //事务开始
+                    ITransaction transaction = session.BeginTransaction();
+                    ICriteria criteria = session.CreateCriteria<Group>();
+                    criteria.Add(Expression.Eq("Code", Code));
+                    IList<Group> list = criteria.List<Group>();
+                    //提交事务
+                    transaction.Commit();
+                    return list[0].Name;
+                }
             }
             catch (Exception ex)
             {
                 NHibernateHelper.WriteErrorLog("分页得到功能分组信息", ex);
                 throw;
-            }
-            finally
-            {
-                session.Close();
             }
         }
     }

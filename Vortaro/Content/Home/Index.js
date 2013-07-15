@@ -628,6 +628,12 @@ $(document).ready(function(){
 			$('#txtColumnType').combobox('reload', '/Column/GetSQL2008ColumTypes');
 		}
 	},{
+		text:'保存说明',
+		iconCls:'icon-save',
+		handler:function(){
+			Port.SaveColumnRemark();
+		}
+	},{
 		text:'移除字段',
 		iconCls:'icon-remove',
 		handler:function(){
@@ -656,13 +662,17 @@ $(document).ready(function(){
 			{field:'Owner',title: '前缀',width: 40},
 			{field:'Name',title: '列名',width: 70,sortable:true},
 			{field:'Type',title: '类型',width: 80},
-			{field:'Bewrite',title: '说明',width: 100},
+			{field:'Bewrite',title: '说明',width: 100,editor:'text'},
 			{field:'Author',title: '作者',width: 50,hidden:true},
 			{field:'CreateTime',title: '创建时间',width: 140,sortable:true,hidden:true}
 		]],
 		onClickRow:function(rowIndex, rowData){
 			index = rowIndex;//得到选中行
 			databaseCode = rowData.Code;
+		},
+		onDblClickRow:function(rowIndex, rowData){
+			$('#dg-Column').datagrid('beginEdit', rowIndex);
+			$('#dg-Column').datagrid('getEditors', rowIndex)[0].target.focus();
 		}
 	});
 	//字段pager
@@ -1157,6 +1167,52 @@ var Port = {
 						$('#dg-Column').datagrid('load');
 					}
 					$("#window-Column").window("close");
+				} else {
+					$.messager.alert('提示',json.msg,'warning');
+				}
+			},
+			error: function () {
+				$.messager.alert('提示','服务器忙！','error');
+			}
+		});
+	},
+	SaveColumnRemark:function(){//保存字段说明
+		//首先结束编辑行
+		var rows = $('#dg-Column').datagrid('getRows');
+		for (var i=0;i<rows.length;i++) {  
+			$('#dg-Column').datagrid('endEdit', i);
+		}
+		//获取改变的行
+		var changesRows = $('#dg-Column').datagrid('getChanges');
+		if(changesRows.length < 1)
+		{
+			$.messager.alert('提示','请改变或填写相应的字段说明！','warning');
+			return;
+		}
+		var parms = [];
+		for(var j=0;j<changesRows.length;j++){
+			parms.push({Code:changesRows[j].Code,Bewrite:changesRows[j].Bewrite});
+		}
+		var waitWin = $.messager.progress({  
+			title:'请稍等',
+			msg:'保存中...' 
+		});  
+		//批量保存
+		$.ajax({
+			url: '/Column/SaveColumnRemark',
+			type: 'POST',
+			data: {changRecord:JSON.stringify(parms)},
+			success: function (data) {
+				if(data == ''){return;}
+				var json = eval('(' + data + ')');
+				if (!json.HasError) {
+					$.messager.progress('bar').progressbar({
+						onChange: function(value){
+							if(value == 100){
+								$.messager.progress('close'); 
+							}
+						}
+					});
 				} else {
 					$.messager.alert('提示',json.msg,'warning');
 				}

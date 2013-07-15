@@ -86,9 +86,8 @@ namespace Vortaro.Controllers
             NameValueCollection Params = HttpContext.Request.Form;//参数
             string projectCode = Params["projectCode"];//项目编码
             string fileName = Params["projectName"];//项目名称
-            string path = Server.MapPath(string.Format("~/Content/Pack/{0}", User.Identity.Name));
+            string path = Server.MapPath(string.Format("~/Content/Pack/{0}/{1}.zip", User.Identity.Name, fileName));
             string directory = Server.MapPath(string.Format("~/Content/Html/{0}/{1}", User.Identity.Name, fileName));
-            path = GenerateHtml(projectCode, fileName, path, directory);
             FileInfo fi = new FileInfo(path);
             if (fi.Exists)//输出压缩包
             {
@@ -164,19 +163,53 @@ namespace Vortaro.Controllers
         {
             string tableStr = string.Empty;//表格
             IList<Database> databaselist = DDatabase.GetDatabase(new Guid(projectCode));
+            int rowspan = 0;//分组跨行计数
+            bool merger = false;//是否合并
             for (int k = 0; k < databaselist.Count; k++)
             {
                 tableStr = @"<table style=""width: 100%;"">
 		            <tr><td colspan=""5"" style=""font-weight:bold;line-height:20px;"">数据库：" + databaselist[k].Name + @"</td></tr>
-		            <tr class=""text-center""><th style=""width:60px"">序号</th><th>表名</th><th>别名</th><th>作者</th><th>分组</th></tr>";
+		            <tr class=""text-center""><th style=""width:60px"">序号</th><th>分组</th><th>表名</th><th>别名</th><th>作者</th></tr>";
                 IList<Tables> tableslist = DTables.GetTables(databaselist[k].Code);
                 for (int q = 0; q < tableslist.Count; q++)
                 {
                     string url = string.Format("Items/{0}_{1}.html", databaselist[k].Name, tableslist[q].Name);
-                    tableStr += string.Format(@"<tr><td style=""padding-left:10px;"">{0}</td>
-	                        <td><a href=""{1}"">{2}</a></td><td><a href=""{1}"">{3}</a></td>
-	                        <td class=""text-center"">{4}</td><td class=""text-center"">{5}</td></tr>", q + 1, url, tableslist[q].Name, tableslist[q].Alias,
-                        tableslist[q].Author, DGroup.GetGroupName(tableslist[q].GroupCode));
+                    tableStr += string.Format(@"<tr><td style=""padding-left:10px;"">{0}</td>", q + 1);
+                    string GroupName = string.Empty,
+                        TempName = DGroup.GetGroupName(tableslist[q].GroupCode);
+                    //名称竖排
+                    for (int Q = 0; Q < TempName.Length; Q++)
+                    {
+                        GroupName += TempName[Q].ToString() + "<br />";
+                    }
+                    //分组跨行处理
+                    if (rowspan == 0)
+                    {
+                        for (int j = q; j < tableslist.Count; j++)
+                        {
+                            if (tableslist[j].GroupCode == tableslist[q].GroupCode)
+                            {
+                                rowspan++;
+                            }
+                        }
+                        merger = true;
+                    }
+                    if (rowspan > 0 && merger == true)
+                    {
+                        tableStr += string.Format(@"<td class=""text-center"" style=""width:60px;"" rowspan=""{0}"">{1}</td>", rowspan, GroupName);
+                        merger = false;//停用合并
+                        rowspan--;//合并行计数
+                    }
+                    else if (rowspan > 0) 
+                    {
+                        rowspan--;//合并行计数
+                    }
+                    else
+                    {
+                        tableStr += string.Format(@"<td class=""text-center"" style=""width:60px;"">{0}</td>", GroupName);
+                    }
+                    tableStr += string.Format(@"<td><a href=""{0}"">{1}</a></td><td><a href=""{0}"">{2}</a></td>
+	                        <td class=""text-center"">{3}</td></tr>", url, tableslist[q].Name, tableslist[q].Alias,tableslist[q].Author);
                     BuildItems(tableslist[q].Code, tableslist[q].Name, tableslist[q].Alias, directory + "/" + url, itemsPath);
                 }
                 tableStr += "</table><br />";

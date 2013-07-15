@@ -33,12 +33,14 @@
             for (j = 0; j < list.length; j++) {
                 $out += ' <table style="width: 100%;"> <tr> <td colspan="5" style="font-weight:bold;line-height:20px;"> 数据库：';
                 $out += $escape($string(list[j].databaseName));
-                $out += ' </td> </tr> <tr class="text-center"> <th style="width:60px">序号</th> <th>表名</th> <th>别名</th> <th>作者</th> <th>分组</th> </tr> ';
+                $out += ' </td> </tr> <tr class="text-center"> <th style="width:60px">序号</th> <th>分组</th> <th>表名</th> <th>别名</th> <th>作者</th> </tr> ';
                 var childrenList = list[j].list;
                 for (i = 0; i < childrenList.length; i++) {
 
                     $out += ' <tr> <td style="padding-left:10px;">';
                     $out += $escape($string(i + 1));
+                    $out += '</td> <td class="text-center">';
+                    $out += $escape($string(childrenList[i].GroupName));
                     $out += '</td> <td> <a href="';
                     $out += $escape($string(childrenList[i].Url));
                     $out += '">';
@@ -49,8 +51,6 @@
                     $out += $escape($string(childrenList[i].Alias));
                     $out += '</a> </td> <td class="text-center">';
                     $out += $escape($string(childrenList[i].Author));
-                    $out += '</td> <td class="text-center">';
-                    $out += $escape($string(childrenList[i].GroupName));
                     $out += '</td> </tr> ';
                 }
                 $out += ' </table> <br /> ';

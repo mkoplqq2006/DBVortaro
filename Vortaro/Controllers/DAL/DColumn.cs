@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using NHibernate;
 using NHibernate.Criterion;
@@ -24,45 +25,42 @@ namespace Vortaro.Controllers.DAL
         public static string GetPageColumn(int start, int pageSize, string query, string tablesCode)
         {
             //获得当前运行的NHibernate实例
-            ISession session = NHibernateHelper.GetCurrentSession();
-            //事务开始
-            using (ITransaction transaction = session.BeginTransaction())
-            {
-                IList<Column> list = null;//分页的记录
-                int count = 0;//总的记录条数
-                try
+            using (ISession session = NHibernateHelper.GetCurrentSession())
+            {   //事务开始
+                using (ITransaction transaction = session.BeginTransaction())
                 {
-                    ICriteria criteria = session.CreateCriteria<Column>();
-                    if (tablesCode == "")
+                    IList<Column> list = null;//分页的记录
+                    int count = 0;//总的记录条数
+                    try
                     {
-                        count = 0;
-                        list = null;
-                    }
-                    else
-                    {
-                        criteria.Add(Expression.Eq("TablesCode", new Guid(tablesCode)));
-                        if (!String.IsNullOrEmpty(query))
+                        ICriteria criteria = session.CreateCriteria<Column>();
+                        if (tablesCode == "")
                         {
-                            criteria.Add(Expression.Or(Expression.Like("Name", "%" + query + "%"), Expression.Like("Alias", "%" + query + "%")));
+                            count = 0;
+                            list = null;
                         }
-                        count = criteria.List<Column>().Count;
-                        list = criteria.SetFirstResult(start).SetMaxResults(pageSize).AddOrder(Order.Desc("Id")).List<Column>();
+                        else
+                        {
+                            criteria.Add(Expression.Eq("TablesCode", new Guid(tablesCode)));
+                            if (!String.IsNullOrEmpty(query))
+                            {
+                                criteria.Add(Expression.Or(Expression.Like("Name", "%" + query + "%"), Expression.Like("Alias", "%" + query + "%")));
+                            }
+                            count = criteria.SetCacheable(true).List<Column>().Count;
+                            list = criteria.SetCacheable(true).SetFirstResult(start).SetMaxResults(pageSize).AddOrder(Order.Desc("Id")).List<Column>();
+                        }
+                        transaction.Commit();//提交事务
                     }
-                    transaction.Commit();//提交事务
+                    catch (Exception ex)
+                    {
+                        NHibernateHelper.WriteErrorLog("分页得到列字段信息", ex);
+                        transaction.Rollback();//回滚事务
+                    }
+                    Hashtable hasTable = new Hashtable();
+                    hasTable.Add("total", count);
+                    hasTable.Add("rows", list);
+                    return JsonHelper.ToJson(hasTable);
                 }
-                catch (Exception ex) 
-                {
-                    NHibernateHelper.WriteErrorLog("分页得到列字段信息", ex);
-                    transaction.Rollback();//回滚事务
-                }
-                finally
-                {
-                    session.Close();
-                }
-                Hashtable hasTable = new Hashtable();
-                hasTable.Add("total", count);
-                hasTable.Add("rows", list);
-                return JsonHelper.ToJson(hasTable);
             }
         }
         /// <summary>
@@ -74,39 +72,62 @@ namespace Vortaro.Controllers.DAL
         /// <returns>列名是否重复</returns>
         public static bool RepeatColumnName(string ColumnName, Guid TablesCode, string Author)
         {
-            ISession session = null;
             try
-            {
-                //获得当前运行的NHibernate实例
-                session = NHibernateHelper.GetCurrentSession();
-                //事务开始
-                ITransaction transaction = session.BeginTransaction();
-                ICriteria criteria = session.CreateCriteria<Column>();
-                if (!String.IsNullOrEmpty(ColumnName))
+            {   //获得当前运行的NHibernate实例
+                using (ISession session = NHibernateHelper.GetCurrentSession())
                 {
-                    criteria.Add(Expression.Eq("Name", ColumnName));
+                    //事务开始
+                    ITransaction transaction = session.BeginTransaction();
+                    ICriteria criteria = session.CreateCriteria<Column>();
+                    if (!String.IsNullOrEmpty(ColumnName))
+                    {
+                        criteria.Add(Expression.Eq("Name", ColumnName));
+                    }
+                    if (!TablesCode.Equals(Guid.Empty))
+                    {
+                        criteria.Add(Expression.Eq("TablesCode", TablesCode));
+                    }
+                    if (!String.IsNullOrEmpty(Author))
+                    {
+                        criteria.Add(Expression.Eq("Author", Author));
+                    }
+                    int count = criteria.SetCacheable(true).List<Column>().Count;
+                    //提交事务
+                    transaction.Commit();
+                    return count > 0 ? true : false;
                 }
-                if (!TablesCode.Equals(Guid.Empty))
-                {
-                    criteria.Add(Expression.Eq("TablesCode", TablesCode));
-                }
-                if (!String.IsNullOrEmpty(Author))
-                {
-                    criteria.Add(Expression.Eq("Author", Author));
-                }
-                int count = criteria.List<Column>().Count;
-                //提交事务
-                transaction.Commit();
-                return count > 0 ? true : false;
             }
             catch (Exception ex)
             {
                 NHibernateHelper.WriteErrorLog("判断列名是否重复", ex);
                 throw;
             }
-            finally
+        }
+        /// <summary>
+        /// 根据表编码，获取列字段
+        /// </summary>
+        /// <param name="tablesCode">表编码</param>
+        /// <returns></returns>
+        public static IList<Column> GetColumn(Guid tablesCode)
+        {
+            try
+            {   //获得当前运行的NHibernate实例
+                using (ISession session = NHibernateHelper.GetCurrentSession())
+                {
+                    //事务开始
+                    ITransaction transaction = session.BeginTransaction();
+                    ICriteria criteria = session.CreateCriteria<Column>();
+                    criteria.Add(Expression.Eq("TablesCode", tablesCode));
+                    IList<Column> list = criteria.SetCacheable(true).AddOrder(Order.Desc("Id")).List<Column>();
+                    //提交事务
+                    transaction.Commit();
+                    return list;
+                }
+            }
+            catch (Exception ex)
             {
-                session.Close();
+                NHibernateHelper.WriteErrorLog("根据表编码，获取列字段", ex);
+                throw;
             }
         }
         /// <summary>
@@ -126,35 +147,26 @@ namespace Vortaro.Controllers.DAL
             return SQLHelper.GetDataTable(connection, Sql);
         }
         /// <summary>
-        /// 根据表编码，获取列字段
+        /// 批量保存列字段说明
         /// </summary>
-        /// <param name="tablesCode">表编码</param>
+        /// <param name="Columnlist">列字段信息</param>
         /// <returns></returns>
-        public static IList<Column> GetColumn(Guid tablesCode)
+        public static int SaveColumnRemark(List<Column> Columnlist) 
         {
-            ISession session = null;
+            string sql = "begin transaction ";
+            foreach (Column column in Columnlist)
+            {
+                sql += string.Format("update Z_Column set Bewrite='{0}' where Code='{1}';",column.Bewrite,column.Code);
+            }
+            sql += @"if @@error<>0 begin rollback transaction end else begin commit transaction end";
             try
             {
-                //获得当前运行的NHibernate实例
-                session = NHibernateHelper.GetCurrentSession();
-                //事务开始
-                ITransaction transaction = session.BeginTransaction();
-                ICriteria criteria = session.CreateCriteria<Column>();
-                criteria.Add(Expression.Eq("TablesCode", tablesCode));
-                IList<Column> list = criteria.AddOrder(Order.Desc("Id")).List<Column>();
-                int count = criteria.List<Column>().Count;
-                //提交事务
-                transaction.Commit();
-                return list;
+                return SQLHelper.ExecuteSql(ConfigurationManager.ConnectionStrings["ApplicationServices"].ToString(), sql);
             }
             catch (Exception ex)
             {
-                NHibernateHelper.WriteErrorLog("根据表编码，获取列字段", ex);
+                NHibernateHelper.WriteErrorLog("批量保存列字段说明", ex);
                 throw;
-            }
-            finally
-            {
-                session.Close();
             }
         }
     }

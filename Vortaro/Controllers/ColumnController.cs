@@ -5,6 +5,7 @@ using System.Web.Mvc;
 using Vortaro.Controllers.DAL;
 using VortaroModel;
 using System.Data;
+using Newtonsoft.Json;
 
 namespace Vortaro.Controllers
 {
@@ -53,6 +54,14 @@ namespace Vortaro.Controllers
                 result = DColumn.Add(column) != null ? "{HasError:false,msg:'列字段创建成功！'}" : "{HasError:true,msg:'列字段创建失败，请稍候再试！'}";
             }
             Response.Write(result);
+            Response.End();
+        }
+        //批量保存列字段说明
+        public void SaveColumnRemark() 
+        {
+            NameValueCollection Params = HttpContext.Request.Params;//参数
+            List<Column> Columnlist = JsonConvert.DeserializeObject<List<Column>>(Params["changRecord"]);
+            Response.Write(DColumn.SaveColumnRemark(Columnlist) > 0 ? "{HasError:false,msg:'列字段说明保存成功！'}" : "{HasError:true,msg:'列字段说明保存失败！'}");
             Response.End();
         }
         //删除列字段信息
