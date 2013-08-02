@@ -2,12 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Data;
 using System.IO;
 using System.Text;
+using System.Web;
 using System.Web.Mvc;
 using Vortaro.Controllers.DAL;
 using VortaroModel;
-using System.Web;
 
 namespace Vortaro.Controllers
 {
@@ -170,13 +171,13 @@ namespace Vortaro.Controllers
                 tableStr = @"<table style=""width: 100%;"">
 		            <tr><td colspan=""5"" style=""font-weight:bold;line-height:20px;"">数据库：" + databaselist[k].Name + @"</td></tr>
 		            <tr class=""text-center""><th style=""width:60px"">序号</th><th>分组</th><th>表名</th><th>别名</th><th>作者</th></tr>";
-                IList<Tables> tableslist = DTables.GetTables(databaselist[k].Code);
-                for (int q = 0; q < tableslist.Count; q++)
+                DataTable tableslist = DTables.GetTables2(databaselist[k].Code);
+                for (int q = 0; q < tableslist.Rows.Count; q++)
                 {
-                    string url = string.Format("Items/{0}_{1}.html", databaselist[k].Name, tableslist[q].Name);
+                    string url = string.Format("Items/{0}_{1}.html", databaselist[k].Name, tableslist.Rows[q]["Name"].ToString());
                     tableStr += string.Format(@"<tr><td style=""padding-left:10px;"">{0}</td>", q + 1);
                     string GroupName = string.Empty,
-                        TempName = DGroup.GetGroupName(tableslist[q].GroupCode);
+                        TempName = DGroup.GetGroupName(new Guid(tableslist.Rows[q]["GroupCode"].ToString()));
                     //名称竖排
                     for (int Q = 0; Q < TempName.Length; Q++)
                     {
@@ -185,9 +186,9 @@ namespace Vortaro.Controllers
                     //分组跨行处理
                     if (rowspan == 0)
                     {
-                        for (int j = q; j < tableslist.Count; j++)
+                        for (int j = q; j < tableslist.Rows.Count; j++)
                         {
-                            if (tableslist[j].GroupCode == tableslist[q].GroupCode)
+                            if (tableslist.Rows[j]["GroupCode"].ToString() == tableslist.Rows[q]["GroupCode"].ToString())
                             {
                                 rowspan++;
                             }
@@ -209,8 +210,14 @@ namespace Vortaro.Controllers
                         tableStr += string.Format(@"<td class=""text-center"" style=""width:60px;"">{0}</td>", GroupName);
                     }
                     tableStr += string.Format(@"<td><a href=""{0}"">{1}</a></td><td><a href=""{0}"">{2}</a></td>
-	                        <td class=""text-center"">{3}</td></tr>", url, tableslist[q].Name, tableslist[q].Alias,tableslist[q].Author);
-                    BuildItems(tableslist[q].Code, tableslist[q].Name, tableslist[q].Alias, directory + "/" + url, itemsPath);
+	                        <td class=""text-center"">{3}</td></tr>", 
+                            url, tableslist.Rows[q]["Name"].ToString(), 
+                            tableslist.Rows[q]["Alias"].ToString(), 
+                            tableslist.Rows[q]["Author"].ToString());
+                    BuildItems(new Guid(tableslist.Rows[q]["Code"].ToString()), 
+                            tableslist.Rows[q]["Name"].ToString(),
+                             tableslist.Rows[q]["Alias"].ToString(), 
+                            directory + "/" + url, itemsPath);
                 }
                 tableStr += "</table><br />";
             }
@@ -285,15 +292,15 @@ namespace Vortaro.Controllers
             {
                 if (i > 0) { Json.Append(","); }
                 Json.Append("{ databaseName: '" + databaselist[i].Name + "',list: [");
-                IList<Tables> tableslist = DTables.GetTables(databaselist[i].Code);
-                for (int j = 0; j < tableslist.Count; j++)
+                DataTable tableslist = DTables.GetTables2(databaselist[i].Code);
+                for (int j = 0; j < tableslist.Rows.Count; j++)
                 {
                     if (j > 0) { Json.Append(","); }
-                    Json.Append("{ Name: '"+tableslist[j].Name+"',");
-                    Json.Append("Url: 'Items/items.html?code="+tableslist[j].Code+"',");
-                    Json.Append("Alias: '" + tableslist[j].Alias + "',");
-                    Json.Append("Author: '" + tableslist[j].Author + "',");
-                    Json.Append("GroupName: '" + DGroup.GetGroupName(tableslist[j].GroupCode) + "'");
+                    Json.Append("{ Name: '" + tableslist.Rows[j]["Name"].ToString() + "',");
+                    Json.Append("Url: 'Items/items.html?code="+tableslist.Rows[j]["Code"].ToString()+"',");
+                    Json.Append("Alias: '" + tableslist.Rows[j]["Alias"].ToString() + "',");
+                    Json.Append("Author: '" + tableslist.Rows[j]["Author"].ToString() + "',");
+                    Json.Append("GroupName: '" + DGroup.GetGroupName(new Guid(tableslist.Rows[j]["GroupCode"].ToString())) + "'");
                     Json.Append("}");
                 }
                 Json.Append("]}");

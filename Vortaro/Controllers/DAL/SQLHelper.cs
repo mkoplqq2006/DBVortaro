@@ -1,6 +1,7 @@
-﻿using System.Data;
+﻿using System;
+using System.Configuration;
+using System.Data;
 using System.Data.SqlClient;
-using System;
 
 namespace Vortaro.Controllers.DAL
 {
@@ -17,6 +18,10 @@ namespace Vortaro.Controllers.DAL
         /// <returns></returns>
         public static DataTable GetDataTable(string sqlConnection, string sql)
         {
+            if (string.IsNullOrEmpty(sqlConnection))
+            {
+                sqlConnection = ConfigurationManager.ConnectionStrings["ApplicationServices"].ConnectionString;
+            }
             using (SqlConnection connection = new SqlConnection(sqlConnection))
             {
                 DataTable dt = new DataTable();
@@ -47,6 +52,10 @@ namespace Vortaro.Controllers.DAL
         /// <returns></returns>
         public static int ExecuteSql(string sqlConnection, string sql)
         {
+            if (string.IsNullOrEmpty(sqlConnection))
+            {
+                sqlConnection = ConfigurationManager.ConnectionStrings["ApplicationServices"].ConnectionString;
+            }
             using (SqlConnection connection = new SqlConnection(sqlConnection))
             {
                 int rows = 0;
@@ -67,6 +76,5 @@ namespace Vortaro.Controllers.DAL
                 return rows;
             }
         }
-
     }
 }

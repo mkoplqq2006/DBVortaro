@@ -89,7 +89,7 @@ namespace Vortaro.Controllers
                     tablesName = DTables.GetTablesName(new Guid(DatabaseCode));
                 }
                 string SqlConnection = string.Format("server={0};database={1};uid={2};pwd={3};", ServerName, DatabaseName, ServerUser, ServerPwd);
-                string Sql = "select name,crdate as createdate from sysobjects where xtype='U'";
+                string Sql = "select name,crdate as createdate from sysobjects where xtype='U' and name!='sysdiagrams'";//排除sysdiagrams表
                 if (tablesName != string.Empty)
                 {
                     Sql += string.Format(" and name not in({0})",tablesName);

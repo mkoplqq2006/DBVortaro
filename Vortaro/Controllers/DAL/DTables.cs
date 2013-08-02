@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using NHibernate;
 using NHibernate.Criterion;
 using VortaroModel;
@@ -136,6 +137,24 @@ namespace Vortaro.Controllers.DAL
                     transaction.Commit();
                     return list;
                 }
+            }
+            catch (Exception ex)
+            {
+                NHibernateHelper.WriteErrorLog("根据数据库编码，获取表", ex);
+                throw;
+            }
+        }
+        /// <summary>
+        /// 根据数据库编码，获取表(分组后内部排序)
+        /// </summary>
+        /// <param name="databaseCode">数据库编码</param>
+        /// <returns></returns>
+        public static DataTable GetTables2(Guid databaseCode)
+        {
+            try
+            {
+                string sql = string.Format(@"SELECT *,RANK() OVER(PARTITION BY GroupCode order by Name) as GroupId FROM Z_Tables as [Tables] WHERE DatabaseCode = '{0}'", databaseCode);
+                return SQLHelper.GetDataTable("",sql);
             }
             catch (Exception ex)
             {
