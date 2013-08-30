@@ -168,7 +168,8 @@ namespace Vortaro.Controllers
             bool merger = false;//是否合并
             for (int k = 0; k < databaselist.Count; k++)
             {
-                tableStr = @"<table style=""width: 100%;"">
+                tableStr = @"
+                    <table style=""width: 100%;"">
 		            <tr><td colspan=""5"" style=""font-weight:bold;line-height:20px;"">数据库：" + databaselist[k].Name + @"</td></tr>
 		            <tr class=""text-center""><th style=""width:60px"">序号</th><th>分组</th><th>表名</th><th>别名</th><th>作者</th></tr>";
                 DataTable tableslist = DTables.GetTables2(databaselist[k].Code);
@@ -181,7 +182,7 @@ namespace Vortaro.Controllers
                     //名称竖排
                     for (int Q = 0; Q < TempName.Length; Q++)
                     {
-                        GroupName += TempName[Q].ToString() + "<br />";
+                        GroupName += TempName[Q].ToString() + "<br/>";
                     }
                     //分组跨行处理
                     if (rowspan == 0)
@@ -219,7 +220,7 @@ namespace Vortaro.Controllers
                              tableslist.Rows[q]["Alias"].ToString(), 
                             directory + "/" + url, itemsPath);
                 }
-                tableStr += "</table><br />";
+                tableStr += "</table><br/>";
             }
             string[] indexTemp = new string[] { "@title", "@table", "@footer" };
             string[] indexHtml = new string[] { fileName, tableStr, "DBVortaro" };

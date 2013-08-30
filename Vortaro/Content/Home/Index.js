@@ -122,6 +122,11 @@ $(document).ready(function(){
 		text:'预览字典',
 		iconCls:'icon-view',
 		handler:function(){
+			var row = $('#dg-Project').datagrid('getSelected');
+			if(row == null){
+				$.messager.alert('提示','请选择需要预览的项目！','warning');
+				return;
+			}
 			window.open('../../Content/Dictionary/Preview/index.html?code='+projectCode+'&name='+escape(projectName),'_blank');
 		}
 	}];
