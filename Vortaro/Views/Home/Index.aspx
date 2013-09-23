@@ -130,8 +130,9 @@
 	                </div>
                 </div>
             </div>
-            <div data-options="region:'south',border:false" style="text-align:center; padding-top:10px; padding-bottom:10px;">  
-                <a class="easyui-linkbutton" data-options="iconCls:'icon-save'" href="javascript:void(0)" onclick="javascript:Port.SaveDatabase();">保存</a>  
+            <div data-options="region:'south',border:false" style="text-align:center; padding-top:10px; padding-bottom:10px;">
+                <a class="easyui-linkbutton" data-options="iconCls:'icon-link'" href="javascript:void(0)" onclick="javascript:Port.ConnectionDatabase();">测试</a>
+                <a id="window-Database-Save" class="easyui-linkbutton" data-options="iconCls:'icon-save'" href="javascript:void(0)" onclick="javascript:Port.SaveDatabase();">保存</a>
                 <a class="easyui-linkbutton" data-options="iconCls:'icon-cancel'" href="javascript:void(0)" onclick="javascript:$('#window-Database').window('close');">取消</a>  
             </div>
         </div>

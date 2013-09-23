@@ -92,5 +92,15 @@ namespace Vortaro.Controllers.DAL
                 throw;
             }
         }
+        /// <summary>
+        /// 连接数据库
+        /// </summary>
+        /// <param name="database">数据库</param>
+        /// <returns></returns>
+        public static bool ConnectionDatabase(Database database)
+        {
+            string SqlConnection = string.Format("server={0};database={1};uid={2};pwd={3};", database.ServerName, database.Name, database.ServerUser, database.ServerPwd);
+            return SQLHelper.TestConnection(SqlConnection);
+        }
     }
 }

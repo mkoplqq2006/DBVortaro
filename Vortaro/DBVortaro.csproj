@@ -155,6 +155,7 @@
     <Content Include="Content\Jquery-easyui-1.3.2\themes\icons\imgdata.png" />
     <Content Include="Content\Jquery-easyui-1.3.2\themes\icons\kappfinder.png" />
     <Content Include="Content\Jquery-easyui-1.3.2\themes\icons\leaf.gif" />
+    <Content Include="Content\Jquery-easyui-1.3.2\themes\icons\link.png" />
     <Content Include="Content\Jquery-easyui-1.3.2\themes\icons\Magnifier.png" />
     <Content Include="Content\Jquery-easyui-1.3.2\themes\icons\message.png" />
     <Content Include="Content\Jquery-easyui-1.3.2\themes\icons\message_edit.png" />

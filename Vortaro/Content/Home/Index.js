@@ -880,6 +880,51 @@ var Port = {
 			}
 		});
 	},
+	ConnectionDatabase:function(){//测试数据库连接
+		Port.NoNull('#txtServerName','请输入服务器名称！');
+		Port.NoNull('#txtServerUser','请输入登录名！');
+		Port.NoNull('#txtServerPwd','请输入密码！');
+		$.ajax({
+			url: '/Database/ConnectionDatabase',
+			type: 'POST',
+			data: {
+				name: $("#txtDatabaseName").val(), 
+				serverName:$("#txtServerName").val(),
+				serverUser:$("#txtServerUser").val(),	
+				serverPwd:$("#txtServerPwd").val()
+			},
+			success: function (data) {
+				if(data == ''){return;}
+				var json = eval('(' + data + ')');
+				if (!json.HasError) {
+					$.messager.show({
+						title:'提示',
+						msg:json.msg,
+						showType:'slide',
+						style:{
+							right:'',
+							top:document.body.scrollTop+document.documentElement.scrollTop,
+							bottom:''
+						}
+					});
+				} else {
+					$.messager.show({
+						title:'提示',
+						msg:json.msg,
+						showType:'slide',
+						style:{
+							right:'',
+							top:document.body.scrollTop+document.documentElement.scrollTop,
+							bottom:''
+						}
+					});
+				}
+			},
+			error: function () {
+				$.messager.alert('提示','服务器忙！','error');
+			}
+		});
+	},
 	SaveGroup:function(){//保存分组
 		Port.NoNull('#txtGroupName','请输入功能分组名称！');
 		Port.NoNull('#txtGroupBewrite','请输入功能分组描述！');

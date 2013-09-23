@@ -64,5 +64,18 @@ namespace Vortaro.Controllers
             Response.Write(result);
             Response.End();
         }
+        //连接数据库
+        public void ConnectionDatabase()
+        {
+            NameValueCollection Params = HttpContext.Request.Form;//参数
+            Database database = new Database();
+            database.Name = Params["name"];
+            database.ServerName = Params["serverName"];
+            database.ServerUser = Params["serverUser"];
+            database.ServerPwd = Params["serverPwd"];//未加密
+            string result = DDatabase.ConnectionDatabase(database) ? "{HasError:false,msg:'连接成功！'}" : "{HasError:true,msg:'连接失败！'}";
+            Response.Write(result);
+            Response.End();
+        }
     }
 }

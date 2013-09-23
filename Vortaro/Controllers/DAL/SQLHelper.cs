@@ -76,5 +76,33 @@ namespace Vortaro.Controllers.DAL
                 return rows;
             }
         }
+
+        /// <summary>
+        /// 测试连接
+        /// </summary>
+        /// <param name="sqlConnection">数据库连接字符</param>
+        /// <returns></returns>
+        public static bool TestConnection(string sqlConnection)
+        {
+            bool result = false;
+            using (SqlConnection connection = new SqlConnection(sqlConnection))
+            {
+                try
+                {
+                    connection.Open();
+                    result = true;
+                }
+                catch (SqlException ex)
+                {
+                    NHibernateHelper.WriteErrorLog("测试连接异常", ex);
+                }
+                finally
+                {
+                    connection.Close();
+                    connection.Dispose();
+                }
+                return result;
+            }
+        }
     }
 }
