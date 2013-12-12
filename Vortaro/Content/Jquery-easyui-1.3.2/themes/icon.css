@@ -104,3 +104,6 @@
 .icon-link{/*连接*/
     background:url('icons/link.png') no-repeat center center;
 }
+.icon-group{/*成员*/
+    background:url('icons/group.png') no-repeat center center;
+}

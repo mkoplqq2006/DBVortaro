@@ -520,19 +520,20 @@ $(document).ready(function(){
 						$.messager.progress('bar').progressbar({
 							onChange: function(value){
 								if(value == 100){
-									$.messager.progress('close'); 
 									$('#dg-Tables').datagrid('unselectAll');
+									$.messager.progress('close');
+									$.messager.alert('提示',json.msg,'warning');
 								}
 							}
 						});
 					} else {
-						$.messager.alert('提示',json.msg,'warning');
 						$.messager.progress('close'); 
+						$.messager.alert('提示',json.msg,'warning');
 					}
 				},
 				error: function () {
-					$.messager.alert('提示','服务器忙！','error');
 					$.messager.progress('close'); 
+					$.messager.alert('提示','服务器忙！','error');
 				}
 			});
 		}
@@ -666,9 +667,10 @@ $(document).ready(function(){
 		columns:[[
 			{field:'Owner',title: '前缀',width: 40},
 			{field:'Name',title: '列名',width: 70,sortable:true},
-			{field:'Type',title: '类型',width: 80},
-			{field:'Bewrite',title: '说明',width: 100,editor:'text'},
+			{field:'Type',title: '类型',width: 80,sortable:true},
+			{field:'Bewrite',title: '说明',width: 100,editor:'text',sortable:true},
 			{field:'Author',title: '作者',width: 50,hidden:true},
+			{field:'FieldState',title: '字段状态',width: 140,sortable:true,hidden:true},
 			{field:'CreateTime',title: '创建时间',width: 140,sortable:true,hidden:true}
 		]],
 		onClickRow:function(rowIndex, rowData){
@@ -707,10 +709,11 @@ $(document).ready(function(){
 			}
 		}   
 	});
-	//隐藏2、3、4选项卡
+	//隐藏2、3、4、5选项卡
 	$('#tabs-Project').tabs('disableTab', 1);	
 	$('#tabs-Project').tabs('disableTab', 2);	
 	$('#tabs-Project').tabs('disableTab', 3);
+	$('#tabs-Project').tabs('disableTab', 4);
 });
 //调用方法接口
 var Port = {

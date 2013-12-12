@@ -42,6 +42,7 @@ namespace Vortaro.Controllers.DAL
                         else
                         {
                             criteria.Add(Expression.Eq("TablesCode", new Guid(tablesCode)));
+                            criteria.Add(Expression.Eq("FieldState", 1));//状态为启用
                             if (!String.IsNullOrEmpty(query))
                             {
                                 criteria.Add(Expression.Or(Expression.Like("Name", "%" + query + "%"), Expression.Like("Alias", "%" + query + "%")));
@@ -118,6 +119,7 @@ namespace Vortaro.Controllers.DAL
                     ITransaction transaction = session.BeginTransaction();
                     ICriteria criteria = session.CreateCriteria<Column>();
                     criteria.Add(Expression.Eq("TablesCode", tablesCode));
+                    criteria.Add(Expression.Eq("FieldState", 1));//状态为启用
                     IList<Column> list = criteria.SetCacheable(true).AddOrder(Order.Desc("Id")).List<Column>();
                     //提交事务
                     transaction.Commit();

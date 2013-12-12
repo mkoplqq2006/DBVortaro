@@ -126,22 +126,33 @@ namespace Vortaro.Controllers
             try
             {
                 string SqlConnection = string.Format("server={0};database={1};uid={2};pwd={3};", ServerName, DatabaseName, ServerUser, ServerPwd);
+                string exMsg = string.Empty;//异常记录
                 for (int i = 0; i < TablesCode.Length; i++)//循环表编码集合
                 {
                     //根据表编码，得到列字段信息（主表）
                     DataTable columnDt = DColumn.GetTableColumn(TablesName[i], SqlConnection);
+                    if (columnDt.Rows.Count == 0)
+                    {
+                        exMsg += "主表[" + TablesName[i] + "],列字段信息为空。<br/>";
+                        continue;
+                    }
                     //根据表编码，得到列字段信息（副表）
                     IList<Column> columnlist = DColumn.GetColumn(new Guid(TablesCode[i]));
+                    if (columnlist.Count == 0)
+                    {
+                        exMsg += "副表[" + TablesName[i] + "],列字段信息为空。<br/>";
+                        continue;
+                    }
                     //获取(副表同步主表)说明的SQL语句
                     SynchronousChief(Params, new Guid(TablesCode[i]),TablesName[i], SqlConnection, columnDt, columnlist);
                     //根据(主表同步副表)字段
                     SynchronousSide(Params, new Guid(TablesCode[i]), columnDt, columnlist);
                 }
-                Response.Write("{HasError:false,msg:'同步成功！'}");
+                Response.Write("{HasError:false,msg:'同步成功！<br/>" + exMsg + "'}");
             }
-            catch
+            catch(Exception ex)
             {
-                Response.Write("{HasError:true,msg:'同步失败！'}");
+                Response.Write("{HasError:true,msg:'同步失败！<br/>异常：" + ex.Message.Replace("\r\n", "<br/>") + "'}");
             }
             Response.End();
         }
@@ -196,21 +207,17 @@ namespace Vortaro.Controllers
                 //附表存在作废字段
                 if (columnNumber == 0)
                 {
-                    Column column = new Column();
-                    column.Author = User.Identity.Name;
-                    column.TablesCode = new Guid(Params["tablesCode"]);
-                    column.Owner = columnlist[i].Owner;
-                    column.Name = columnlist[i].Name;
-                    column.Type = columnlist[i].Type;
-                    column.Bewrite = columnlist[i].Bewrite;
+                    Column column = columnlist[i];
                     column.FieldState = 0;
                     column.HideAuthor = User.Identity.Name;
                     column.HideTime = DateTime.Now;
-                    column.Code = columnlist[i].Code;
                     DColumn.Update(column);
                 }
             }
-            SQLHelper.ExecuteSql(SqlConnection, SynchronousSQL);
+            if (!string.IsNullOrEmpty(SynchronousSQL))
+            {
+                SQLHelper.ExecuteSql(SqlConnection, SynchronousSQL);
+            }
         }
 
         /// <summary>

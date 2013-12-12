@@ -42,7 +42,14 @@
 				    <table id="dg-Column"></table>
 			    </div>
 		    </div>
-        </div>  
+        </div>
+        <div title="参与成员" style="padding:5px;" data-options="iconCls:'icon-group'">
+            <div class="easyui-layout" data-options="fit:true,border: false">
+			    <div data-options="region:'center'">
+				    <table id="dg-User"></table>
+			    </div>
+		    </div>
+        </div>
     </div>
     <div id="window-Project" iconCls="icon-book">
         <div class="easyui-layout" data-options="fit:true">

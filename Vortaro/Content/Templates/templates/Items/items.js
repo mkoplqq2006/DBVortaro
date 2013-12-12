@@ -46,7 +46,7 @@
                 $out += $escape($string(list[i].CreateTime));
                 $out += '</td> </tr> ';
             }
-            $out += ' </table> </div> <div style="padding-top:20px;text-align:center;"> <a href="javascript:;" onclick="javascript:history.go(-1);">返回</a> </div> </div> </div> ';
+            $out += ' </table> </div> <div style="padding-top:20px;text-align:center;"> <a href="../index.html">返回</a> </div> </div> </div> ';
             include('footer')
             return new String($out)
         };
