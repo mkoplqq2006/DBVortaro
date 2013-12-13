@@ -13,7 +13,7 @@ namespace Vortaro.Controllers.DAL
     public class DGroup : AbstractDAL<Group>
     {
         /// <summary>
-        /// 分页得到功能分组信息
+        /// 分页获取功能分组信息
         /// </summary>
         /// <param name="start">起始</param>
         /// <param name="pageSize">结束</param>
@@ -53,7 +53,7 @@ namespace Vortaro.Controllers.DAL
                     }
                     catch (Exception ex)
                     {
-                        NHibernateHelper.WriteErrorLog("分页得到功能分组信息", ex);
+                        NHibernateHelper.WriteErrorLog("分页获取功能分组信息", ex);
                         throw;
                     }
                     finally
@@ -91,7 +91,7 @@ namespace Vortaro.Controllers.DAL
             }
             catch (Exception ex)
             {
-                NHibernateHelper.WriteErrorLog("分页得到功能分组信息", ex);
+                NHibernateHelper.WriteErrorLog("分页获取功能分组信息", ex);
                 throw;
             }
         }

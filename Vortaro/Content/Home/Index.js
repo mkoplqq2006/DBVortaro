@@ -14,7 +14,9 @@ var index = 0,//项目选中行
 	ServerName='',//服务器名称
 	ServerUser='',//登录名
 	ServerPwd='',//密码
-	tabsIndex=0;//面板切换序号
+	tabsIndex=0,//面板切换序号
+	copyTablesCodes='',//复制表编码
+	copyTablesNames='';//复制表名称
 $(document).ready(function(){
 	var pageSize=30,query='';
 	//项目window
@@ -45,7 +47,7 @@ $(document).ready(function(){
 		handler:function(){
 			var row = $('#dg-Project').datagrid('getSelected');
 			if(row == null){
-				$.messager.alert('提示','请选择要编辑的项目信息！','warning');
+				Port.ShowMsg('请选择要编辑的项目信息！');
 				return;
 			}
 			typeCmd = '2';
@@ -65,7 +67,7 @@ $(document).ready(function(){
 		handler:function(){
 			var row = $('#dg-Project').datagrid('getSelected');
 			if(row == null){
-				$.messager.alert('提示','请选择需要生成的项目！','warning');
+				Port.ShowMsg('请选择需要生成的项目！');
 				return;
 			}
 			$.ajax({
@@ -79,9 +81,9 @@ $(document).ready(function(){
 					if(data == ''){return;}
 					var json = eval('(' + data + ')');
 					if (!json.HasError) {
-						$.messager.alert('提示','字典生成成功！');
+						Port.ShowMsg('字典生成成功！');
 					} else {
-						$.messager.alert('提示',json.msg,'warning');
+						Port.ShowMsg(json.msg);
 					}
 				},
 				error: function () {
@@ -95,7 +97,7 @@ $(document).ready(function(){
 		handler:function(){
 			var row = $('#dg-Project').datagrid('getSelected');
 			if(row == null){
-				$.messager.alert('提示','请选择需要打包的项目！','warning');
+				Port.ShowMsg('请选择需要打包的项目！');
 				return;
 			}
 			/*创建form请求*/
@@ -124,7 +126,7 @@ $(document).ready(function(){
 		handler:function(){
 			var row = $('#dg-Project').datagrid('getSelected');
 			if(row == null){
-				$.messager.alert('提示','请选择需要预览的项目！','warning');
+				Port.ShowMsg('请选择需要预览的项目！');
 				return;
 			}
 			window.open('../../Content/Dictionary/Preview/index.html?code='+projectCode+'&name='+escape(projectName),'_blank');
@@ -153,7 +155,7 @@ $(document).ready(function(){
 			{field:'CreateTime',title: '创建时间',width: 160,sortable:true,hidden:true}
 		]],
 		onClickRow:function(rowIndex, rowData){
-			index = rowIndex;//得到选中行
+			index = rowIndex;//获取选中行
 			projectCode = rowData.Code;
 			projectName = rowData.Name;
 			$('#tabs-Project').tabs('enableTab', 1);
@@ -173,7 +175,7 @@ $(document).ready(function(){
     //项目pager
 	$('#dg-Project').datagrid('getPager').pagination({
 		pageSize: pageSize,
-		pageList: [30,60,90,120,150],
+		pageList: [30,60,90,120,150,200,500],
 		onBeforeRefresh:function(pageNumber, pageSize){
 			$(this).pagination('loading');
 			$(this).pagination('loaded');
@@ -208,7 +210,7 @@ $(document).ready(function(){
 		handler:function(){
 			var row = $('#dg-Group').datagrid('getSelected');
 			if(row == null){
-				$.messager.alert('提示','请选择要编辑的功能分组信息！','warning');
+				Port.ShowMsg('请选择要编辑的功能分组信息！');
 				return;
 			}
 			typeCmd = '2';
@@ -248,7 +250,7 @@ $(document).ready(function(){
 			{field:'CreateTime',title: '创建时间',width: 160,sortable:true,hidden:true}
 		]],
 		onClickRow:function(rowIndex, rowData){
-			index = rowIndex;//得到选中行
+			index = rowIndex;//获取选中行
 			groupCode = rowData.Code;
 			if(databaseCode != ''){
 				$('#tabs-Project').tabs('enableTab', 3);
@@ -266,7 +268,7 @@ $(document).ready(function(){
 	//功能分组pager
 	$('#dg-Group').datagrid('getPager').pagination({
 		pageSize: pageSize,
-		pageList: [30,60,90,120,150],
+		pageList: [30,60,90,120,150,200,500],
 		onBeforeRefresh:function(pageNumber, pageSize){
 			$(this).pagination('loading');
 			$(this).pagination('loaded');
@@ -305,7 +307,7 @@ $(document).ready(function(){
 		handler:function(){
 			var row = $('#dg-Database').datagrid('getSelected');
 			if(row == null){
-				$.messager.alert('提示','请选择要编辑的数据库信息！','warning');
+				Port.ShowMsg('请选择要编辑的数据库信息！');
 				return;
 			}
 			typeCmd = '2';
@@ -353,7 +355,7 @@ $(document).ready(function(){
 			{field:'CreateTime',title: '创建时间',width: 160,sortable:true,hidden:true}
 		]],
 		onClickRow:function(rowIndex, rowData){
-			index = rowIndex;//得到选中行
+			index = rowIndex;//获取选中行
 			databaseCode = rowData.Code;
 			databaseName=rowData.Name;
 			ServerName=rowData.ServerName;
@@ -375,7 +377,7 @@ $(document).ready(function(){
 	//数据库pager
 	$('#dg-Database').datagrid('getPager').pagination({
 		pageSize: pageSize,
-		pageList: [30,60,90,120,150],
+		pageList: [30,60,90,120,150,200,500],
 		onBeforeRefresh:function(pageNumber, pageSize){
 			$(this).pagination('loading');
 			$(this).pagination('loaded');
@@ -386,13 +388,15 @@ $(document).ready(function(){
 	$('#window-Import-Table').window({
 		title:'导入表',
 		iconCls:'icon-arrow-downward',
-		width:567, 
+		width:670, 
 		height:390,
 		minimizable:false,
 		collapsible:false,
 		modal:true,
-		resizable:false,
-		closed:true
+		closed:true,
+		onBeforeClose:function(){
+			query = '';
+		}
 	});
 
 	//表window
@@ -414,7 +418,7 @@ $(document).ready(function(){
 		handler:function(){
 			var row = $('#dg-Database').datagrid('getSelected');
 			if(row == null){
-				$.messager.alert('提示','请选择数据库！','warning');
+				Port.ShowMsg('请选择数据库！');
 				return;
 			}
 			//导入表Grid
@@ -425,20 +429,46 @@ $(document).ready(function(){
 					DatabaseName:databaseName,
 					ServerName:ServerName,
 					ServerUser:ServerUser,
-					ServerPwd:ServerPwd
+					ServerPwd:ServerPwd,
+					SearchValue:query
 				},
+				pageSize:pageSize,
+				pagination: true,
 				rownumbers: true,
 				fitColumns: true,
+				singleSelect: false,
 				remoteSort:false,
-				fit: true,
-				border: false,            
-				striped: true,	
+				fit: true,          
+				striped: true,
 				columns:[[
-					{field:'name',title: '表名',width: 300,sortable:true,formatter:Port.TableIcon},
-					{field:'createdate',title: '创建时间',width: 160,sortable:true}
+					{field:'name',title: '表名',width: 260,sortable:true,formatter:Port.TableIcon},
+					{field:'createdate',title: '创建时间',width: 150,sortable:true}
 				]]
 			});
-			var row2 = $('#Import-Grid').datagrid('getRows');
+			//导入表查询条件
+			$("#import-table-search").searchbox({
+				prompt:'筛选表名',
+				searcher:function(value,name){
+					query = value;
+					$('#Import-Grid').datagrid('load',{
+						DatabaseCode:databaseCode,
+						DatabaseName:databaseName,
+						ServerName:ServerName,
+						ServerUser:ServerUser,
+						ServerPwd:ServerPwd,
+						SearchValue:query
+					});
+				}
+			});
+			//导入表pager
+			$('#Import-Grid').datagrid('getPager').pagination({
+				pageSize: pageSize,
+				pageList: [30,60,90,120,150,200,500],
+				onBeforeRefresh:function(pageNumber, pageSize){
+					$(this).pagination('loading');
+					$(this).pagination('loaded');
+				}
+			});
 			$('#window-Import-Table').window('open');
 		}
 	},{
@@ -456,7 +486,7 @@ $(document).ready(function(){
 		handler:function(){
 			var row = $('#dg-Tables').datagrid('getSelected');
 			if(row == null){
-				$.messager.alert('提示','请选择要编辑的数据库信息！','warning');
+				Port.ShowMsg('请选择要编辑的数据库信息！');
 				return;
 			}
 			typeCmd = '2';
@@ -489,7 +519,7 @@ $(document).ready(function(){
 		handler:function(){
 			var row = $('#dg-Tables').datagrid('getSelections');
 			if(row.length == 0){
-				$.messager.alert('提示','请选择要同步的表！','warning');
+				Port.ShowMsg('请选择要同步的表！');
 				return;
 			}
 			var tablesCodes = '',tablesNames='';
@@ -522,13 +552,13 @@ $(document).ready(function(){
 								if(value == 100){
 									$('#dg-Tables').datagrid('unselectAll');
 									$.messager.progress('close');
-									$.messager.alert('提示',json.msg,'warning');
+									Port.ShowMsg(json.msg);
 								}
 							}
 						});
 					} else {
 						$.messager.progress('close'); 
-						$.messager.alert('提示',json.msg,'warning');
+						Port.ShowMsg(json.msg);
 					}
 				},
 				error: function () {
@@ -564,7 +594,7 @@ $(document).ready(function(){
 			{field:'CreateTime',title: '创建时间',width: 160,sortable:true,hidden:true}
 		]],
 		onClickRow:function(rowIndex, rowData){
-			index = rowIndex;//得到选中行
+			index = rowIndex;//获取选中行
 			tablesCode = rowData.Code;
 			tablesName = rowData.Name;
 		},
@@ -582,7 +612,7 @@ $(document).ready(function(){
 	//表pager
 	$('#dg-Tables').datagrid('getPager').pagination({
 		pageSize: pageSize,
-		pageList: [30,60,90,120,150],
+		pageList: [30,60,90,120,150,200,500],
 		onBeforeRefresh:function(pageNumber, pageSize){
 			$(this).pagination('loading');
 			$(this).pagination('loaded');
@@ -621,7 +651,7 @@ $(document).ready(function(){
 		handler:function(){
 			var row = $('#dg-Column').datagrid('getSelected');
 			if(row == null){
-				$.messager.alert('提示','请选择要编辑的字段信息！','warning');
+				Port.ShowMsg('请选择要编辑的字段信息！');
 				return;
 			}
 			typeCmd = '2';
@@ -644,6 +674,76 @@ $(document).ready(function(){
 		iconCls:'icon-remove',
 		handler:function(){
 			Port.DelColumn();
+		}
+	},{
+		text:'复制说明',
+		iconCls:'icon-copy',
+		handler:function(){
+			//判断是否选择表
+			var row = $('#dg-Tables').datagrid('getSelected');
+			if(row == null){
+				Port.ShowMsg('请选择要复制说明的表！');
+				return;
+			}
+			if(row.Code == copyTablesCodes){
+				Port.ShowMsg('【'+copyTablesNames+'】<br/>字段说明复制成功！');
+				$('#tables-paste').linkbutton('enable');
+				return;
+			}
+			copyTablesCodes = row.Code;//复制表编码
+			copyTablesNames = row.Name;//复制表名称
+			Port.ShowMsg('【'+copyTablesNames+'】<br/>字段说明复制成功！');
+			$('#tables-paste').linkbutton('enable');
+		}
+	},{
+		id:'tables-paste',
+		text:'粘贴说明',
+		iconCls:'icon-paste',
+		disabled:true,
+		handler:function(){
+			var row = $('#dg-Tables').datagrid('getSelected');
+			if(row == null){
+				Port.ShowMsg('请选择要粘贴说明的表！');
+				return;
+			}
+			if(row.Code == copyTablesCodes){
+				Port.ShowMsg('不能在同一张表里面执行【复制、粘贴】操作！');
+				return;
+			}
+			//提示
+			$.messager.confirm('粘贴说明', '粘贴会覆盖以前的说明，确实要粘贴？', function(r){
+				if (r){
+					$.ajax({
+						url: '/Column/PasteColumnBewrite',
+						type: 'POST',
+						data: {copyTablesCode:copyTablesCodes, pasteTablesCode:row.Code},
+						success: function (data) {
+							if(data == ''){return;}
+							var json = eval('(' + data + ')');
+							if (!json.HasError) {
+								$('#tables-paste').linkbutton('disable');
+								Port.ShowMsg('【'+row.Name+'】<br/>字段说明粘贴成功！');
+								//清空
+								copyTablesCodes = '';
+								copyTablesNames = '';
+								//加载字段grid
+								$('#dg-Column').datagrid('load',{
+									tablesCode:row.Code,
+									query:query
+								});
+								$("#dg-Column").datagrid({
+									title:databaseName+' 数据库 | '+row.Name+" 表字段"
+								});
+							} else {
+								$.messager.alert('提示',json.msg,'warning'); 
+							}
+						},
+						error: function () {
+							$.messager.alert('提示','服务器忙！','error');
+						}
+					});
+				}
+			});
 		}
 	}];
 	//字段grid
@@ -674,7 +774,7 @@ $(document).ready(function(){
 			{field:'CreateTime',title: '创建时间',width: 140,sortable:true,hidden:true}
 		]],
 		onClickRow:function(rowIndex, rowData){
-			index = rowIndex;//得到选中行
+			index = rowIndex;//获取选中行
 			databaseCode = rowData.Code;
 		},
 		onDblClickRow:function(rowIndex, rowData){
@@ -685,7 +785,7 @@ $(document).ready(function(){
 	//字段pager
 	$('#dg-Column').datagrid('getPager').pagination({
 		pageSize: pageSize,
-		pageList: [30,60,90,120,150],
+		pageList: [30,60,90,120,150,200,500],
 		onBeforeRefresh:function(pageNumber, pageSize){
 			$(this).pagination('loading');
 			$(this).pagination('loaded');
@@ -705,6 +805,11 @@ $(document).ready(function(){
 					$('#tabs-Project').tabs('disableTab', 1);	
 					$('#tabs-Project').tabs('disableTab', 2);	
 					$('#tabs-Project').tabs('disableTab', 3);
+				break;
+				case '表字段':
+					if(copyTablesCodes != ''){
+						$('#tables-paste').linkbutton('enable');
+					}
 				break;
 			}
 		}   
@@ -761,7 +866,7 @@ var Port = {
 	DelProject:function(){//删除项目信息
 		var row = $('#dg-Project').datagrid('getSelected');
 		if(row == null){
-			$.messager.alert('提示','请选择要删除的项目！','warning');
+			Port.ShowMsg('请选择要删除的项目！');
 			return;
 		}
 		$.messager.confirm('删除数据', '确实要永久性地删除选中数据？', function(r){
@@ -857,7 +962,7 @@ var Port = {
 	DelDatabase:function(){//删除数据库
 		var row = $('#dg-Database').datagrid('getSelected');
 		if(row == null){
-			$.messager.alert('提示','请选择要删除的数据库！','warning');
+			Port.ShowMsg('请选择要删除的数据库！');
 			return;
 		}
 		$.messager.confirm('删除数据', '确实要永久性地删除选中数据？', function(r){
@@ -900,27 +1005,9 @@ var Port = {
 				if(data == ''){return;}
 				var json = eval('(' + data + ')');
 				if (!json.HasError) {
-					$.messager.show({
-						title:'提示',
-						msg:json.msg,
-						showType:'slide',
-						style:{
-							right:'',
-							top:document.body.scrollTop+document.documentElement.scrollTop,
-							bottom:''
-						}
-					});
+					Port.ShowMsg(json.msg);
 				} else {
-					$.messager.show({
-						title:'提示',
-						msg:json.msg,
-						showType:'slide',
-						style:{
-							right:'',
-							top:document.body.scrollTop+document.documentElement.scrollTop,
-							bottom:''
-						}
-					});
+					Port.ShowMsg(json.msg);
 				}
 			},
 			error: function () {
@@ -932,7 +1019,7 @@ var Port = {
 		Port.NoNull('#txtGroupName','请输入功能分组名称！');
 		Port.NoNull('#txtGroupBewrite','请输入功能分组描述！');
 		if(projectCode == ''){
-			$.messager.alert('提示','请选择项目！','warning');
+			Port.ShowMsg('请选择项目！');
 			$("#txtGroupBewrite").focus();
 			return;			
 		}
@@ -976,7 +1063,7 @@ var Port = {
 	DelGroup:function(){//删除分组
 		var row = $('#dg-Group').datagrid('getSelected');
 		if(row == null){
-			$.messager.alert('提示','请选择要删除的功能分组！','warning');
+			Port.ShowMsg('请选择要删除的功能分组！');
 			return;
 		}
 		$.messager.confirm('删除数据', '确实要永久性地删除选中数据？', function(r){
@@ -1006,11 +1093,11 @@ var Port = {
 		Port.NoNull('#txtTablesName','请输入表名称！');
 		Port.NoNull('#txtTablesAlias','请输入表别名！');
 		if(databaseCode == ''){
-			$.messager.alert('提示','请选择数据库！','warning');
+			Port.ShowMsg('请选择数据库！');
 			return;			
 		}
 		if(groupCode == ''){
-			$.messager.alert('提示','请选择功能分组！','warning');
+			Port.ShowMsg('请选择功能分组！');
 			return;			
 		}
 		var parms;
@@ -1053,7 +1140,7 @@ var Port = {
 	DelTable:function(){//删除表
 		var row = $('#dg-Tables').datagrid('getSelections');
 		if(row.length == 0){
-			$.messager.alert('提示','请选择要删除的表！','warning');
+			Port.ShowMsg('请选择要删除的表！');
 			return;
 		}
 		$.messager.confirm('删除数据', '确实要永久性地删除选中数据？', function(r){
@@ -1093,11 +1180,11 @@ var Port = {
 	ImportTable:function(){//导入表
 	    var row = $('#Import-Grid').datagrid('getSelections');
 		if(row.length == 0){
-			$.messager.alert('提示','请选中需要导入的表！','warning');
+			Port.ShowMsg('请选中需要导入的表！');
 			return;
 		}
 		if(groupCode == ''){
-			$.messager.alert('提示','请选择功能分组！','warning');
+			Port.ShowMsg('请选择功能分组！');
 			return;			
 		}
 		//开始导入表
@@ -1165,12 +1252,12 @@ var Port = {
 		Port.NoNull('#txtColumnName','请输入字段列名！');
 		Port.NoNull('#txtColumnOwner','请输入字段前缀！');
 		if($('#txtColumnType').combo('getText') == ''){
-			$.messager.alert('提示','请选择字段类型！','warning');
+			Port.ShowMsg('请选择字段类型！');
 			$('#txtColumnType').focus();
 			return;			
 		}
 		if(tablesCode == ''){
-			$.messager.alert('提示','请选择相应的表！','warning');
+			Port.ShowMsg('请选择相应的表！');
 			return;			
 		}
 		var parms;
@@ -1239,7 +1326,7 @@ var Port = {
 		var changesRows = $('#dg-Column').datagrid('getChanges');
 		if(changesRows.length < 1)
 		{
-			$.messager.alert('提示','请改变或填写相应的字段说明！','warning');
+			Port.ShowMsg('请改变或填写相应的字段说明！');
 			return;
 		}
 		var parms = [];
@@ -1278,7 +1365,7 @@ var Port = {
 	DelColumn:function(){//删除表字段
 		var row = $('#dg-Column').datagrid('getSelected');
 		if(row == null){
-			$.messager.alert('提示','请选择要删除的字段！','warning');
+			Port.ShowMsg('请选择要删除的字段！');
 			return;
 		}
 		$.messager.confirm('删除数据', '确实要永久性地删除选中数据？', function(r){
@@ -1312,5 +1399,13 @@ var Port = {
 	},
 	TableIcon:function(value){//表图标
 		return '<img src="../Content/Images/grid.png" border="0" align="absmiddle"> '+value;
+	},
+	ShowMsg:function(msg){
+		$.messager.show({
+			title:'提示',
+			msg:'<span style="color:red;">'+msg+'</span>',
+			timeout:5000,
+			showType:'slide'
+		});
 	}
 };

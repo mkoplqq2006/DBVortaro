@@ -15,7 +15,7 @@ namespace Vortaro.Controllers.DAL
     public class DColumn : AbstractDAL<Column>
     {
         /// <summary>
-        /// 分页得到列字段信息
+        /// 分页获取列字段信息
         /// </summary>
         /// <param name="start">起始</param>
         /// <param name="pageSize">结束</param>
@@ -54,7 +54,7 @@ namespace Vortaro.Controllers.DAL
                     }
                     catch (Exception ex)
                     {
-                        NHibernateHelper.WriteErrorLog("分页得到列字段信息", ex);
+                        NHibernateHelper.WriteErrorLog("分页获取列字段信息", ex);
                         transaction.Rollback();//回滚事务
                     }
                     Hashtable hasTable = new Hashtable();
@@ -168,6 +168,38 @@ namespace Vortaro.Controllers.DAL
             catch (Exception ex)
             {
                 NHibernateHelper.WriteErrorLog("批量保存列字段说明", ex);
+                throw;
+            }
+        }
+        /// <summary>
+        /// 粘贴列字段说明信息
+        /// </summary>
+        /// <param name="copyTablesCode">复制表编码</param>
+        /// <param name="pasteTablesCode">粘贴表编码</param>
+        /// <returns></returns>
+        public static int PasteColumnBewrite(string copyTablesCode, string pasteTablesCode) 
+        {
+            //根据复制表编码，获取表的列名以及说明信息
+            IList<Column> list = GetColumn(new Guid(copyTablesCode));
+            if (list.Count == 0)
+            {
+                return 0;
+            }
+            string sql = "begin transaction ";
+            foreach(Column column in list){
+                if (!string.IsNullOrEmpty(column.Bewrite))
+                {
+                    sql += string.Format("update Z_Column set Bewrite='{0}' where Name='{1}' and TablesCode='{2}';", column.Bewrite, column.Name, pasteTablesCode);
+                }
+            }
+            sql += @"if @@error<>0 begin rollback transaction end else begin commit transaction end";
+            try
+            {
+                return SQLHelper.ExecuteSql(ConfigurationManager.ConnectionStrings["ApplicationServices"].ToString(), sql);
+            }
+            catch (Exception ex)
+            {
+                NHibernateHelper.WriteErrorLog("粘贴列字段说明信息", ex);
                 throw;
             }
         }

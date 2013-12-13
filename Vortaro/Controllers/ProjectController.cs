@@ -16,7 +16,7 @@ namespace Vortaro.Controllers
     [HandleError]
     public class ProjectController : Controller
     {
-        //得到项目信息
+        //获取项目信息
         public void GetPageProject()
         {
             NameValueCollection Params = HttpContext.Request.Form;//参数
@@ -259,7 +259,8 @@ namespace Vortaro.Controllers
         /// <param name="fi">文件</param>
         private void WriteZip(FileInfo fi)
         {
-            string outputFileName = string.Empty,browser = Request.UserAgent.ToUpper();
+            string outputFileName = string.Empty,
+                   browser = Request.UserAgent.ToUpper();
             if (browser.Contains("MS") == true && browser.Contains("IE") == true)
             {
                 outputFileName = Server.UrlEncode(fi.Name);
@@ -273,7 +274,7 @@ namespace Vortaro.Controllers
                 outputFileName = Server.UrlEncode(fi.Name);
             }
             Response.Clear();
-            Response.AddHeader("Content-Disposition", "attachment; filename=" + outputFileName);
+            Response.AddHeader("Content-Disposition", "attachment; filename=" + outputFileName.Replace(".zip", DateTime.Now.ToString("yyyyMMdd") + ".zip"));
             Response.AddHeader("Content-Length", fi.Length.ToString());
             Response.ContentType = "application/octet-stream";
             Response.Filter.Close();
@@ -289,22 +290,29 @@ namespace Vortaro.Controllers
             Json.Append("{ projectName: '" + Params["projectName"] + "',");
             Json.Append("copyright:'DBVortaro',");
             Json.Append("time: '" + DateTime.Now.ToString("yyyy年MM月dd日") + "',list: [");
+            int databaseNumber = 0;//数据库计数器
             for (int i = 0; i < databaselist.Count;i++ )
             {
-                if (i > 0) { Json.Append(","); }
-                Json.Append("{ databaseName: '" + databaselist[i].Name + "',list: [");
                 DataTable tableslist = DTables.GetTables2(databaselist[i].Code);
-                for (int j = 0; j < tableslist.Rows.Count; j++)
+                if (tableslist.Rows.Count > 0)//判断数据库下面是否存在表信息
                 {
-                    if (j > 0) { Json.Append(","); }
-                    Json.Append("{ Name: '" + tableslist.Rows[j]["Name"].ToString() + "',");
-                    Json.Append("Url: 'Items/items.html?code="+tableslist.Rows[j]["Code"].ToString()+"',");
-                    Json.Append("Alias: '" + tableslist.Rows[j]["Alias"].ToString() + "',");
-                    Json.Append("Author: '" + tableslist.Rows[j]["Author"].ToString() + "',");
-                    Json.Append("GroupName: '" + DGroup.GetGroupName(new Guid(tableslist.Rows[j]["GroupCode"].ToString())) + "'");
-                    Json.Append("}");
+                    if (databaseNumber > 0) { Json.Append(","); }
+                    Json.Append("{ databaseName: '" + databaselist[i].Name 
+                        + "',serverName: '" + databaselist[i].ServerName 
+                        + "',list: [");
+                    for (int j = 0; j < tableslist.Rows.Count; j++)
+                    {
+                        if (j > 0) { Json.Append(","); }
+                        Json.Append("{ Name: '" + tableslist.Rows[j]["Name"].ToString() + "',");
+                        Json.Append("Url: 'Items/items.html?code=" + tableslist.Rows[j]["Code"].ToString() + "',");
+                        Json.Append("Alias: '" + tableslist.Rows[j]["Alias"].ToString() + "',");
+                        Json.Append("Author: '" + tableslist.Rows[j]["Author"].ToString() + "',");
+                        Json.Append("GroupName: '" + DGroup.GetGroupName(new Guid(tableslist.Rows[j]["GroupCode"].ToString())) + "'");
+                        Json.Append("}");
+                    }
+                    Json.Append("]}");
+                    databaseNumber++;
                 }
-                Json.Append("]}");
             }
             Json.Append("]}");
             Response.Write(Json.ToString());
@@ -316,7 +324,7 @@ namespace Vortaro.Controllers
             NameValueCollection Params = HttpContext.Request.Form;//参数
             Guid tableCode = new Guid(Params["tableCode"]);
             IList<Column> columnlist = DColumn.GetColumn(tableCode);
-            //根据表编码得到表信息
+            //根据表编码获取表信息
             Tables tables = DTables.GetProjectById(tableCode);
             StringBuilder Json = new StringBuilder();
             Json.Append("{ Name: '" + tables.Name + "',");//表名

@@ -1,7 +1,7 @@
 ﻿<%@ Page Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">
-    主页
+    DBVortaro
 </asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="HeadContent" runat="server">
@@ -198,10 +198,13 @@
     </div>
     <div id="window-Import-Table">
         <div class="easyui-layout" data-options="fit:true">
-            <div data-options="region:'center',border:false">
+            <div data-options="region:'north',border:false" style="padding:5px">
+                <input id="import-table-search" class="easyui-searchbox" style="width:200px"/>
+            </div>
+            <div data-options="region:'center',border:false" style="padding:5px">
                 <div id="Import-Grid"></div>
             </div>
-            <div data-options="region:'south',border:false" style="text-align:center; padding-top:10px; padding-bottom:10px;">  
+            <div data-options="region:'south',border:false" style="padding-left:10px; padding-top:10px; padding-bottom:10px;">
                 <a class="easyui-linkbutton" data-options="iconCls:'icon-arrow-downward'" href="javascript:void(0)" onclick="javascript:Port.ImportTable();">导入</a>
                 <a class="easyui-linkbutton" data-options="iconCls:'icon-config'" href="javascript:void(0)" onclick="javascript:Port.ImportTableAll(this);">全选</a>  
                 <a class="easyui-linkbutton" data-options="iconCls:'icon-reload'" href="javascript:void(0)" onclick="javascript:Port.ImportTableRefresh();">刷新</a>  

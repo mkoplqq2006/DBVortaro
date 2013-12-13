@@ -13,7 +13,7 @@ namespace Vortaro.Controllers
     [HandleError]
     public class ColumnController : Controller
     {
-        //得到列字段信息
+        //获取列字段信息
         public void GetPageColumn()
         {
             NameValueCollection Params = HttpContext.Request.Form;//参数
@@ -129,14 +129,14 @@ namespace Vortaro.Controllers
                 string exMsg = string.Empty;//异常记录
                 for (int i = 0; i < TablesCode.Length; i++)//循环表编码集合
                 {
-                    //根据表编码，得到列字段信息（主表）
+                    //根据表编码，获取列字段信息（主表）
                     DataTable columnDt = DColumn.GetTableColumn(TablesName[i], SqlConnection);
                     if (columnDt.Rows.Count == 0)
                     {
                         exMsg += "主表[" + TablesName[i] + "],列字段信息为空。<br/>";
                         continue;
                     }
-                    //根据表编码，得到列字段信息（副表）
+                    //根据表编码，获取列字段信息（副表）
                     IList<Column> columnlist = DColumn.GetColumn(new Guid(TablesCode[i]));
                     if (columnlist.Count == 0)
                     {
@@ -154,6 +154,15 @@ namespace Vortaro.Controllers
             {
                 Response.Write("{HasError:true,msg:'同步失败！<br/>异常：" + ex.Message.Replace("\r\n", "<br/>") + "'}");
             }
+            Response.End();
+        }
+        //粘贴列字段说明信息
+        public void PasteColumnBewrite() 
+        {
+            NameValueCollection Params = HttpContext.Request.Form;//参数
+            string CopyTablesCode = Params["copyTablesCode"];//复制表编码
+            string PasteTablesCode = Params["pasteTablesCode"];//粘贴表编码
+            Response.Write(DColumn.PasteColumnBewrite(CopyTablesCode, PasteTablesCode) > 0 ? "{HasError:false,msg:'粘贴列字段说明成功！'}" : "{HasError:true,msg:'粘贴列字段说明失败！'}");
             Response.End();
         }
 

@@ -14,7 +14,7 @@ namespace Vortaro.Controllers.DAL
     public class DTables : AbstractDAL<Tables>
     {
         /// <summary>
-        /// 分页得到表字段信息
+        /// 分页获取表字段信息
         /// </summary>
         /// <param name="start">起始</param>
         /// <param name="pageSize">结束</param>
@@ -56,7 +56,7 @@ namespace Vortaro.Controllers.DAL
                     }
                     catch (Exception ex)
                     {
-                        NHibernateHelper.WriteErrorLog("分页得到表字段信息", ex);
+                        NHibernateHelper.WriteErrorLog("分页获取表字段信息", ex);
                         throw;
                     }
                     finally

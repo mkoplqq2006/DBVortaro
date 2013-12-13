@@ -13,7 +13,7 @@ namespace Vortaro.Controllers
     [HandleError]
     public class DatabaseController : Controller
     {
-        //得到数据库信息
+        //获取数据库信息
         public void GetPageDatabase()
         {
             NameValueCollection Params = HttpContext.Request.Form;//参数

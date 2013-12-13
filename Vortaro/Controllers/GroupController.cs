@@ -13,7 +13,7 @@ namespace Vortaro.Controllers
     [HandleError]
     public class GroupController: Controller
     {
-        //得到功能分组信息
+        //获取功能分组信息
         public void GetPageGroup()
         {
             NameValueCollection Params = HttpContext.Request.Form;//参数

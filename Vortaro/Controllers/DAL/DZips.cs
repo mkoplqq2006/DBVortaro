@@ -222,7 +222,7 @@ namespace Vortaro.Controllers.DAL
                 {
                     string fileName = Path.GetFileName(theEntry.Name);
 
-                    if (fileName != String.Empty)
+                    if (!string.IsNullOrEmpty(fileName))
                     {
                         int size = 2048;
                         byte[] data = new byte[2048];

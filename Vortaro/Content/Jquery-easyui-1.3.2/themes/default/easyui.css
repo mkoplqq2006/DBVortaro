@@ -1015,7 +1015,7 @@ a:hover.l-btn-disabled {
 }
 .datagrid-header-rownumber,
 .datagrid-cell-rownumber {
-  width: 25px;
+  width: 50px;
   text-align: center;
   margin: 0;
   padding: 0;

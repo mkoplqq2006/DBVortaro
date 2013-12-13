@@ -31,7 +31,9 @@
             $out += $escape($string(projectName));
             $out += '</b></div><br/> <div> ';
             for (j = 0; j < list.length; j++) {
-                $out += ' <table style="width: 100%;"> <tr> <td colspan="5" style="font-weight:bold;line-height:20px;"> 数据库：';
+                $out += ' <table style="width: 100%;"> <tr> <td colspan="5" style="font-weight:bold;line-height:20px;"> 服务器：';
+                $out += $escape($string(list[j].serverName));
+                $out += '<br/> 数据库：';
                 $out += $escape($string(list[j].databaseName));
                 $out += ' </td> </tr> <tr class="text-center"> <th style="width:60px">序号</th> <th>分组</th> <th>表名</th> <th>别名</th> <th>作者</th> </tr> ';
                 var childrenList = list[j].list;

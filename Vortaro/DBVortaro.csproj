@@ -144,6 +144,7 @@
     <Content Include="Content\Jquery-easyui-1.3.2\themes\icons\clear.png" />
     <Content Include="Content\Jquery-easyui-1.3.2\themes\icons\color_swatch.png" />
     <Content Include="Content\Jquery-easyui-1.3.2\themes\icons\config.png" />
+    <Content Include="Content\Jquery-easyui-1.3.2\themes\icons\copy.png" />
     <Content Include="Content\Jquery-easyui-1.3.2\themes\icons\database.png" />
     <Content Include="Content\Jquery-easyui-1.3.2\themes\icons\edit.gif" />
     <Content Include="Content\Jquery-easyui-1.3.2\themes\icons\exit.png" />
@@ -162,6 +163,7 @@
     <Content Include="Content\Jquery-easyui-1.3.2\themes\icons\money_rmb.png" />
     <Content Include="Content\Jquery-easyui-1.3.2\themes\icons\movie.png" />
     <Content Include="Content\Jquery-easyui-1.3.2\themes\icons\not.png" />
+    <Content Include="Content\Jquery-easyui-1.3.2\themes\icons\paste.png" />
     <Content Include="Content\Jquery-easyui-1.3.2\themes\icons\plugin_edit.png" />
     <Content Include="Content\Jquery-easyui-1.3.2\themes\icons\projects.png" />
     <Content Include="Content\Jquery-easyui-1.3.2\themes\icons\publish.png" />
@@ -186,6 +188,8 @@
     <Content Include="Content\Templates\default\Style\Panel\Panel.css" />
     <Content Include="Content\Templates\templates\Items\footer.html" />
     <Content Include="Content\Templates\templates\Items\footer.js" />
+    <Content Include="Content\Templates\templates\Items\items2.html" />
+    <Content Include="Content\Templates\templates\Items\items2.js" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Jquery-easyui-1.3.2\easyui-lang-zh_CN.js" />

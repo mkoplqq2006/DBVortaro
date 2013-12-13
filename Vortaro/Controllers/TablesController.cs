@@ -14,7 +14,7 @@ namespace Vortaro.Controllers
     [HandleError]
     public class TablesController : Controller
     {
-        //得到表信息
+        //获取表信息
         public void GetPageTables()
         {
             NameValueCollection Params = HttpContext.Request.Form;//参数
@@ -68,21 +68,30 @@ namespace Vortaro.Controllers
             Response.Write(result);
             Response.End();
         }
-        //得到需要导入的表
+        //获取需要导入的表
         public void GetImportTables()
         {
             NameValueCollection Params = HttpContext.Request.Form;//参数
+            string page = Params["page"];
+            string rows = Params["rows"];
+            int intPage = int.Parse((page == null || page == "0") ? "1" : page);
+            //每页显示条数  
+            int pageSize = int.Parse((rows == null || rows == "0") ? "10" : rows);
+            //每页的开始记录  第一页为1  第二页为number +1   
+            int start = (intPage - 1) * pageSize;
             string ServerName = Params["ServerName"];
             string ServerUser = Params["ServerUser"];
             string ServerPwd = Params["ServerPwd"];
             ServerPwd = NHibernateHelper.DecryptAES(ServerPwd, "zhangzhangdebing");//解密
             string DatabaseCode = Params["DatabaseCode"];//数据库编码
             string DatabaseName = Params["DatabaseName"];//数据库名称
+            string SearchValue = Params["SearchValue"];//查询条件
             DataTable dt = new DataTable();
+            DataTable dt2 = new DataTable();
             Hashtable hasTable = new Hashtable();
             try
             {
-                //根据数据库编码，得到表名称
+                //根据数据库编码，获取表名称
                 string tablesName = string.Empty;
                 if (DatabaseCode != null)
                 {
@@ -90,23 +99,25 @@ namespace Vortaro.Controllers
                 }
                 string SqlConnection = string.Format("server={0};database={1};uid={2};pwd={3};", ServerName, DatabaseName, ServerUser, ServerPwd);
                 string Sql = "select name,crdate as createdate from sysobjects where xtype='U' and name!='sysdiagrams'";//排除sysdiagrams表
-                if (tablesName != string.Empty)
+                if (!string.IsNullOrEmpty(tablesName))
                 {
                     Sql += string.Format(" and name not in({0})",tablesName);
                 }
-                else 
+                if (!string.IsNullOrEmpty(SearchValue))
                 {
-                    Sql += " order by name asc";
+                    Sql += string.Format(" and name like '%{0}%'", SearchValue);
                 }
                 dt = SQLHelper.GetDataTable(SqlConnection, Sql);
-                hasTable.Add("total", dt.Rows.Count);
-                hasTable.Add("rows", dt);
+                //拼装分页SQL
+                Sql = string.Format(@"select top {1} * from ({0}) as t
+                where t.name not in (select top {2} t2.name from ({0}) as t2)", Sql, pageSize, start);
+                dt2 = SQLHelper.GetDataTable(SqlConnection, Sql);
+                hasTable.Add("total", dt.Rows.Count);//总数据行数
+                hasTable.Add("rows", dt2);
             }
             catch(Exception ex)
             {
                 NHibernateHelper.WriteErrorLog("获取需要导入的表异常", ex);
-                hasTable.Add("total", 0);
-                hasTable.Add("rows", dt);
                 return;
             }
             Response.Write(JsonHelper.ToJson(hasTable));
@@ -143,7 +154,7 @@ namespace Vortaro.Controllers
                         table.Alias = tableName;
                         table.Code = Guid.NewGuid();
 
-                        //根据表名，得到表字段信息
+                        //根据表名，获取表字段信息
                         string SqlConnection = string.Format("server={0};database={1};uid={2};pwd={3};", ServerName, DatabaseName, ServerUser, ServerPwd);
                         DataTable dt = DColumn.GetTableColumn(tableName, SqlConnection);
                         if (dt.Rows.Count > 0)

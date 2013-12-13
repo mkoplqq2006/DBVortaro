@@ -21,7 +21,7 @@
             success: function (result) {
                 if (result == null) { return; }
                 var data = eval('(' + result + ')');
-                seajs.use('../../../Templates/templates/Items/items', function (index) {
+                seajs.use('../../../Templates/templates/Items/items2', function (index) {
                     document.getElementById('doc').innerHTML = index(data);
                 });
             }

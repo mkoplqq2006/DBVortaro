@@ -62,6 +62,12 @@
 .icon-mini-refresh{
 	background:url('icons/mini_refresh.png') no-repeat center center;
 }
+.icon-copy{/*¸´ÖÆ*/
+    background:url('icons/copy.png') no-repeat center center;
+}
+.icon-paste{/*Õ³Ìù*/
+    background:url('icons/paste.png') no-repeat center center;
+}
 .icon-rar{/*Ñ¹Ëõ°ü*/
     background:url('icons/rar.png') no-repeat center center;
 }

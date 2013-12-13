@@ -14,7 +14,7 @@ namespace Vortaro.Controllers.DAL
     public class DDatabase : AbstractDAL<Database>
     {
         /// <summary>
-        /// 分页得到数据库信息
+        /// 分页获取数据库信息
         /// </summary>
         /// <param name="start">起始</param>
         /// <param name="pageSize">结束</param>
@@ -54,7 +54,7 @@ namespace Vortaro.Controllers.DAL
                     }
                     catch (Exception ex)
                     {
-                        NHibernateHelper.WriteErrorLog("分页得到数据库信息", ex);
+                        NHibernateHelper.WriteErrorLog("分页获取数据库信息", ex);
                         throw;
                     }
                     Hashtable hasTable = new Hashtable();
