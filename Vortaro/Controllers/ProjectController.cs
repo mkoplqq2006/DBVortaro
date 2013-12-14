@@ -168,59 +168,62 @@ namespace Vortaro.Controllers
             bool merger = false;//是否合并
             for (int k = 0; k < databaselist.Count; k++)
             {
-                tableStr = @"
-                    <table style=""width: 100%;"">
-		            <tr><td colspan=""5"" style=""font-weight:bold;line-height:20px;"">数据库：" + databaselist[k].Name + @"</td></tr>
-		            <tr class=""text-center""><th style=""width:60px"">序号</th><th>分组</th><th>表名</th><th>别名</th><th>作者</th></tr>";
                 DataTable tableslist = DTables.GetTables2(databaselist[k].Code);
-                for (int q = 0; q < tableslist.Rows.Count; q++)
+                if (tableslist.Rows.Count > 0)//是否存在表字段
                 {
-                    string url = string.Format("Items/{0}_{1}.html", databaselist[k].Name, tableslist.Rows[q]["Name"].ToString());
-                    tableStr += string.Format(@"<tr><td style=""padding-left:10px;"">{0}</td>", q + 1);
-                    string GroupName = string.Empty,
-                        TempName = DGroup.GetGroupName(new Guid(tableslist.Rows[q]["GroupCode"].ToString()));
-                    //名称竖排
-                    for (int Q = 0; Q < TempName.Length; Q++)
+                    tableStr += @"
+                    <table style=""width: 100%;"">
+		            <tr><td colspan=""5"" style=""font-weight:bold;line-height:20px;"">服务器：" + databaselist[k].ServerName + "<br/>数据库：" + databaselist[k].Name + @"</td></tr>
+		            <tr class=""text-center""><th style=""width:60px"">序号</th><th>分组</th><th>表名</th><th>别名</th><th>作者</th></tr>";
+                    for (int q = 0; q < tableslist.Rows.Count; q++)
                     {
-                        GroupName += TempName[Q].ToString() + "<br/>";
-                    }
-                    //分组跨行处理
-                    if (rowspan == 0)
-                    {
-                        for (int j = q; j < tableslist.Rows.Count; j++)
+                        string url = string.Format("Items/{0}_{1}.html", databaselist[k].Name, tableslist.Rows[q]["Name"].ToString());
+                        tableStr += string.Format(@"<tr><td style=""padding-left:10px;"">{0}</td>", q + 1);
+                        string GroupName = string.Empty,
+                            TempName = DGroup.GetGroupName(new Guid(tableslist.Rows[q]["GroupCode"].ToString()));
+                        //名称竖排
+                        for (int Q = 0; Q < TempName.Length; Q++)
                         {
-                            if (tableslist.Rows[j]["GroupCode"].ToString() == tableslist.Rows[q]["GroupCode"].ToString())
-                            {
-                                rowspan++;
-                            }
+                            GroupName += TempName[Q].ToString() + "<br/>";
                         }
-                        merger = true;
+                        //分组跨行处理
+                        if (rowspan == 0)
+                        {
+                            for (int j = q; j < tableslist.Rows.Count; j++)
+                            {
+                                if (tableslist.Rows[j]["GroupCode"].ToString() == tableslist.Rows[q]["GroupCode"].ToString())
+                                {
+                                    rowspan++;
+                                }
+                            }
+                            merger = true;
+                        }
+                        if (rowspan > 0 && merger == true)
+                        {
+                            tableStr += string.Format(@"<td class=""text-center"" style=""width:60px;"" rowspan=""{0}"">{1}</td>", rowspan, GroupName);
+                            merger = false;//停用合并
+                            rowspan--;//合并行计数
+                        }
+                        else if (rowspan > 0)
+                        {
+                            rowspan--;//合并行计数
+                        }
+                        else
+                        {
+                            tableStr += string.Format(@"<td class=""text-center"" style=""width:60px;"">{0}</td>", GroupName);
+                        }
+                        tableStr += string.Format(@"<td><a href=""{0}"">{1}</a></td><td><a href=""{0}"">{2}</a></td>
+	                        <td class=""text-center"">{3}</td></tr>",
+                                url, tableslist.Rows[q]["Name"].ToString(),
+                                tableslist.Rows[q]["Alias"].ToString(),
+                                tableslist.Rows[q]["Author"].ToString());
+                        BuildItems(new Guid(tableslist.Rows[q]["Code"].ToString()),
+                                tableslist.Rows[q]["Name"].ToString(),
+                                 tableslist.Rows[q]["Alias"].ToString(),
+                                directory + "/" + url, itemsPath);
                     }
-                    if (rowspan > 0 && merger == true)
-                    {
-                        tableStr += string.Format(@"<td class=""text-center"" style=""width:60px;"" rowspan=""{0}"">{1}</td>", rowspan, GroupName);
-                        merger = false;//停用合并
-                        rowspan--;//合并行计数
-                    }
-                    else if (rowspan > 0) 
-                    {
-                        rowspan--;//合并行计数
-                    }
-                    else
-                    {
-                        tableStr += string.Format(@"<td class=""text-center"" style=""width:60px;"">{0}</td>", GroupName);
-                    }
-                    tableStr += string.Format(@"<td><a href=""{0}"">{1}</a></td><td><a href=""{0}"">{2}</a></td>
-	                        <td class=""text-center"">{3}</td></tr>", 
-                            url, tableslist.Rows[q]["Name"].ToString(), 
-                            tableslist.Rows[q]["Alias"].ToString(), 
-                            tableslist.Rows[q]["Author"].ToString());
-                    BuildItems(new Guid(tableslist.Rows[q]["Code"].ToString()), 
-                            tableslist.Rows[q]["Name"].ToString(),
-                             tableslist.Rows[q]["Alias"].ToString(), 
-                            directory + "/" + url, itemsPath);
+                    tableStr += "</table><br/>";
                 }
-                tableStr += "</table><br/>";
             }
             string[] indexTemp = new string[] { "@title", "@table", "@footer" };
             string[] indexHtml = new string[] { fileName, tableStr, "DBVortaro" };
