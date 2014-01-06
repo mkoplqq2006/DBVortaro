@@ -758,12 +758,15 @@ $(document).ready(function(){
 		pagination: true,
 		rownumbers: true,
 		fitColumns: true,
-		singleSelect: true,
 		remoteSort:false,
 		fit: true,
 		border: false,            
 		striped: true,
-		toolbar:columnToolbar,		
+		toolbar:columnToolbar,
+		frozenColumns: [[{
+			field: 'ck',
+			checkbox: true  
+		}]],
 		columns:[[
 			{field:'Owner',title: '前缀',width: 40},
 			{field:'Name',title: '列名',width: 70,sortable:true},
@@ -1363,22 +1366,33 @@ var Port = {
 		});
 	},
 	DelColumn:function(){//删除表字段
-		var row = $('#dg-Column').datagrid('getSelected');
-		if(row == null){
+		var rows = $('#dg-Column').datagrid('getSelections');
+		if(rows == null){
 			Port.ShowMsg('请选择要删除的字段！');
 			return;
 		}
+		var codes = '';
+		for(var i=0; i < rows.length; i++){
+			if(i != rows.length-1){
+				codes = codes+rows[i].Code+',';  
+			}else{  
+				codes = codes+rows[i].Code;
+			}   
+        }
 		$.messager.confirm('删除数据', '确实要永久性地删除选中数据？', function(r){
 			if (r){
 				$.ajax({
 					url: '/Column/DeleteColumn',
 					type: 'POST',
-					data: {code:row.Code},
+					data: {code:codes},
 					success: function (data) {
 						if(data == ''){return;}
 						var json = eval('(' + data + ')');
 						if (!json.HasError) {
-							$('#dg-Column').datagrid('deleteRow', index);
+							for(var i = 0; i < rows.length; i++){
+								var index = $('#dg-Column').datagrid('getRowIndex',rows[i]);
+								$('#dg-Column').datagrid('deleteRow', index);
+							}
 						} else {
 							$.messager.alert('提示',json.msg,'warning');
 						}

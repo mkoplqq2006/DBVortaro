@@ -68,7 +68,16 @@ namespace Vortaro.Controllers
         public void DeleteColumn()
         {
             NameValueCollection Params = HttpContext.Request.Form;//参数
-            string result = DColumn.Delete(new Guid(Params["code"])) != null ? "{HasError:false,msg:'列字段删除成功！'}" : "{HasError:true,msg:'列字段删除失败，请稍候再试！'}";
+            string[] codes = Params["code"].ToString().Split(',');
+            bool T = false;
+            if (codes.Length > 0)
+            {
+                foreach(string code in codes)
+                {
+                    T = DColumn.Delete(new Guid(code)) != null ? true : false;
+                }
+            }
+            string result = T ? "{HasError:false,msg:'列字段删除成功！'}" : "{HasError:true,msg:'列字段删除失败，请稍候再试！'}";
             Response.Write(result);
             Response.End();
         }
