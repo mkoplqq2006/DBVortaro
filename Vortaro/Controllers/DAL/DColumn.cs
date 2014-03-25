@@ -48,7 +48,7 @@ namespace Vortaro.Controllers.DAL
                                 criteria.Add(Expression.Or(Expression.Like("Name", "%" + query + "%"), Expression.Like("Alias", "%" + query + "%")));
                             }
                             count = criteria.SetCacheable(true).List<Column>().Count;
-                            list = criteria.SetCacheable(true).SetFirstResult(start).SetMaxResults(pageSize).AddOrder(Order.Desc("Id")).List<Column>();
+                            list = criteria.SetCacheable(true).SetFirstResult(start).SetMaxResults(pageSize).AddOrder(Order.Asc("Id")).List<Column>();
                         }
                         transaction.Commit();//提交事务
                     }
@@ -120,7 +120,7 @@ namespace Vortaro.Controllers.DAL
                     ICriteria criteria = session.CreateCriteria<Column>();
                     criteria.Add(Expression.Eq("TablesCode", tablesCode));
                     criteria.Add(Expression.Eq("FieldState", 1));//状态为启用
-                    IList<Column> list = criteria.SetCacheable(true).AddOrder(Order.Desc("Id")).List<Column>();
+                    IList<Column> list = criteria.SetCacheable(true).AddOrder(Order.Asc("Id")).List<Column>();
                     //提交事务
                     transaction.Commit();
                     return list;
@@ -145,7 +145,7 @@ namespace Vortaro.Controllers.DAL
             from information_schema.columns A
             left join sys.extended_properties C on A.ORDINAL_POSITION=C.minor_id and C.major_id=object_id('{0}')
             left join sys.columns B on B.column_id=A.ORDINAL_POSITION and B.object_id=object_id('{0}')
-            where B.Name is not null and A.table_name='{0}' order by ordinalPosition desc", tableName);
+            where B.Name is not null and A.table_name='{0}' order by ordinalPosition asc", tableName);
             return SQLHelper.GetDataTable(connection, Sql);
         }
         /// <summary>

@@ -11,8 +11,8 @@ namespace Vortaro.Controllers.DAL
         /// <summary>
         /// 添加
         /// </summary>
-        /// <param name="entity"></param>
-        /// <returns></returns>
+        /// <param name="entity">实体对象</param>
+        /// <returns>T</returns>
         public static T Add(T entity)
         {
             using (ISession session = NHibernateHelper.GetCurrentSession())
@@ -26,8 +26,8 @@ namespace Vortaro.Controllers.DAL
                 }
                 catch (Exception ex)
                 {
-                    transaction.Rollback();
                     NHibernateHelper.WriteErrorLog("NHibernate执行添加操作", ex);
+                    transaction.Rollback();
                     throw null;
                 }
             }
@@ -36,7 +36,7 @@ namespace Vortaro.Controllers.DAL
         /// 通过编号获得单个对象
         /// </summary>
         /// <param name="code">编码</param>
-        /// <returns></returns>
+        /// <returns>T</returns>
         public static T GetProjectById(Guid code)
         {
             using (ISession session = NHibernateHelper.GetCurrentSession())
@@ -50,9 +50,9 @@ namespace Vortaro.Controllers.DAL
                 }
                 catch (Exception ex)
                 {
-                    transaction.Rollback();
                     NHibernateHelper.WriteErrorLog("NHibernate通过编号获得单个对象", ex);
-                    throw ex;
+                    transaction.Rollback();
+                    return default(T);
                 }
             }
         }
@@ -60,7 +60,7 @@ namespace Vortaro.Controllers.DAL
         /// 更新
         /// </summary>
         /// <param name="entity">实体对象</param>
-        /// <returns></returns>
+        /// <returns>T</returns>
         public static T Update(T entity)
         {
             using (ISession session = NHibernateHelper.GetCurrentSession())
@@ -74,9 +74,9 @@ namespace Vortaro.Controllers.DAL
                 }
                 catch (Exception ex)
                 {
-                    transaction.Rollback();
                     NHibernateHelper.WriteErrorLog("NHibernate执行更新操作", ex);
-                    throw ex;
+                    transaction.Rollback();
+                    return default(T);
                 }
             }
         }
@@ -84,7 +84,7 @@ namespace Vortaro.Controllers.DAL
         /// 根据编码删除表并返回这个实体对象.
         /// </summary>
         /// <param name="code">编码</param>
-        /// <returns></returns>
+        /// <returns>T</returns>
         public static T Delete(Guid code)
         {
             using (ISession session = NHibernateHelper.GetCurrentSession())
@@ -103,9 +103,9 @@ namespace Vortaro.Controllers.DAL
                 }
                 catch (Exception ex)
                 {
-                    transaction.Rollback();
                     NHibernateHelper.WriteErrorLog("NHibernate执行删除操作", ex);
-                    throw ex;
+                    transaction.Rollback();
+                    return default(T);
                 }
             }
         }

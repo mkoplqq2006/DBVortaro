@@ -47,7 +47,7 @@ namespace Vortaro.Controllers.DAL
                                 criteria.Add(Expression.Or(Expression.Like("Name", "%" + query + "%"), Expression.Like("Alias", "%" + query + "%")));
                             }
                             count = criteria.SetCacheable(true).List<Database>().Count;
-                            list = criteria.SetCacheable(true).SetFirstResult(start).SetMaxResults(pageSize).AddOrder(Order.Desc("Id")).List<Database>();
+                            list = criteria.SetCacheable(true).SetFirstResult(start).SetMaxResults(pageSize).AddOrder(Order.Asc("Id")).List<Database>();
                         }
                         //提交事务
                         transaction.Commit();
@@ -80,7 +80,7 @@ namespace Vortaro.Controllers.DAL
                     ITransaction transaction = session.BeginTransaction();
                     ICriteria criteria = session.CreateCriteria<Database>();
                     criteria.Add(Expression.Eq("ProjectCode", projectCode));
-                    IList<Database> list = criteria.SetCacheable(true).AddOrder(Order.Desc("Id")).List<Database>();
+                    IList<Database> list = criteria.SetCacheable(true).AddOrder(Order.Asc("Id")).List<Database>();
                     //提交事务
                     transaction.Commit();
                     return list;

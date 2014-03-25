@@ -39,7 +39,7 @@ namespace Vortaro.Controllers.DAL
                             criteria.Add(Expression.Or(Expression.Like("Name", "%" + query + "%"), Expression.Like("Bewrite", "%" + query + "%")));
                         }
                         count = criteria.SetCacheable(true).List<Project>().Count;
-                        list = criteria.SetCacheable(true).SetFirstResult(start).SetMaxResults(pageSize).AddOrder(Order.Desc("Id")).List<Project>();
+                        list = criteria.SetCacheable(true).SetFirstResult(start).SetMaxResults(pageSize).AddOrder(Order.Asc("Id")).List<Project>();
                         //提交事务
                         transaction.Commit();
                     }

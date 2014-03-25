@@ -49,7 +49,7 @@ namespace Vortaro.Controllers.DAL
                                 criteria.Add(Expression.Or(Expression.Like("Name", "%" + query + "%"), Expression.Like("Alias", "%" + query + "%")));
                             }
                             count = criteria.SetCacheable(true).List<Tables>().Count;
-                            list = criteria.SetCacheable(true).SetFirstResult(start).SetMaxResults(pageSize).AddOrder(Order.Desc("Id")).List<Tables>();
+                            list = criteria.SetCacheable(true).SetFirstResult(start).SetMaxResults(pageSize).AddOrder(Order.Asc("Id")).List<Tables>();
                         }
                         //提交事务
                         transaction.Commit();
@@ -132,7 +132,7 @@ namespace Vortaro.Controllers.DAL
                     ITransaction transaction = session.BeginTransaction();
                     ICriteria criteria = session.CreateCriteria<Tables>();
                     criteria.Add(Expression.Eq("DatabaseCode", databaseCode));
-                    IList<Tables> list = criteria.AddOrder(Order.Desc("GroupCode")).List<Tables>();
+                    IList<Tables> list = criteria.AddOrder(Order.Asc("Id")).List<Tables>();
                     //提交事务
                     transaction.Commit();
                     return list;
@@ -178,7 +178,7 @@ namespace Vortaro.Controllers.DAL
                     ITransaction transaction = session.BeginTransaction();
                     ICriteria criteria = session.CreateCriteria<Tables>();
                     criteria.Add(Expression.Eq("DatabaseCode", databaseCode));
-                    IList<Tables> list = criteria.AddOrder(Order.Desc("Id")).List<Tables>();
+                    IList<Tables> list = criteria.AddOrder(Order.Asc("Id")).List<Tables>();
                     //提交事务
                     transaction.Commit();
                     if (list.Count > 0)

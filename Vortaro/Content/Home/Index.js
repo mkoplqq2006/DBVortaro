@@ -129,7 +129,7 @@ $(document).ready(function(){
 				Port.ShowMsg('请选择需要预览的项目！');
 				return;
 			}
-			window.open('../../Content/Dictionary/Preview/index.html?code='+projectCode+'&name='+escape(projectName),'_blank');
+			window.open('/Content/Dictionary/Preview/index.html?code='+projectCode+'&name='+escape(projectName),'_blank');
 		}
 	}];
 	//项目grid
@@ -159,12 +159,6 @@ $(document).ready(function(){
 			projectCode = rowData.Code;
 			projectName = rowData.Name;
 			$('#tabs-Project').tabs('enableTab', 1);
-			$('#tabs-Project').tabs('enableTab', 2);
-			//加载功能分组grid
-			$('#dg-Group').datagrid('load',{
-				projectCode:projectCode,
-				query:query
-			});
 			//数据库grid
 			$('#dg-Database').datagrid('load',{
 				projectCode:projectCode,
@@ -174,99 +168,6 @@ $(document).ready(function(){
 	});
     //项目pager
 	$('#dg-Project').datagrid('getPager').pagination({
-		pageSize: pageSize,
-		pageList: [30,60,90,120,150,200,500],
-		onBeforeRefresh:function(pageNumber, pageSize){
-			$(this).pagination('loading');
-			$(this).pagination('loaded');
-		}
-	});
-
-	//功能分组window
-	$('#window-Group').window({
-		title:'功能分组',
-		width:315, 
-		height:175,
-		minimizable:false,
-		maximizable:false,
-		collapsible:false,
-		modal:true,
-		resizable:false,
-		closed:true
-	}); 
-	//功能分组toolbar
-	var groupToolbar = [{
-		text:'创建',
-		iconCls:'icon-add',
-		handler:function(){
-			typeCmd = '1';
-			$('#window-Group').window('open');
-			$('#txtGroupName').val('');
-			$('#txtGroupBewrite').val('');
-		}
-	},{
-		text:'编辑',
-		iconCls:'icon-edit',
-		handler:function(){
-			var row = $('#dg-Group').datagrid('getSelected');
-			if(row == null){
-				Port.ShowMsg('请选择要编辑的功能分组信息！');
-				return;
-			}
-			typeCmd = '2';
-			$('#window-Group').window('open');
-			$('#txtGroupName').val(row.Name);
-			$('#txtGroupBewrite').val(row.Bewrite);
-		}
-	},{
-		text:'移除',
-		iconCls:'icon-remove',
-		handler:function(){
-			Port.DelGroup();
-		}
-	}];
-	//功能分组grid
-	$('#dg-Group').datagrid({
-		title:'功能分组',
-		url:'/Group/GetPageGroup',
-		queryParams: {
-			projectCode:projectCode,
-			query:query
-		},
-		pageSize:pageSize,
-		pagination: true,
-		rownumbers: true,
-		fitColumns: true,
-		singleSelect: true,
-		remoteSort:false,
-		fit: true,
-		border: false,            
-		striped: true,
-		toolbar:groupToolbar,		
-		columns:[[
-			{field:'Name',title: '分组名称',width: 50,sortable:true},
-			{field:'Bewrite',title: '描述',width: 50},
-			{field:'Author',title: '作者',width: 50,hidden:true},
-			{field:'CreateTime',title: '创建时间',width: 160,sortable:true,hidden:true}
-		]],
-		onClickRow:function(rowIndex, rowData){
-			index = rowIndex;//获取选中行
-			groupCode = rowData.Code;
-			if(databaseCode != ''){
-				$('#tabs-Project').tabs('enableTab', 3);
-				//表grid
-				$('#dg-Tables').datagrid('load',{
-					databaseCode:databaseCode,
-					groupCode:groupCode,
-					query:query
-				});
-				//清空字段grid
-				$('#dg-Column').datagrid('loadData', { total: 0, rows: [] });
-			}
-		}
-	});
-	//功能分组pager
-	$('#dg-Group').datagrid('getPager').pagination({
 		pageSize: pageSize,
 		pageList: [30,60,90,120,150,200,500],
 		onBeforeRefresh:function(pageNumber, pageSize){
@@ -361,6 +262,13 @@ $(document).ready(function(){
 			ServerName=rowData.ServerName;
 			ServerUser=rowData.ServerUser;
 			ServerPwd=rowData.ServerPwd;
+			$('#tabs-Project').tabs('enableTab', 2);
+			//加载功能分组grid
+			$('#dg-Group').datagrid('load',{
+				projectCode:projectCode,
+				databaseCode:databaseCode,
+				query:query
+			});
 			if(groupCode != ''){
 				$('#tabs-Project').tabs('enableTab', 3);
 				//表grid
@@ -376,6 +284,100 @@ $(document).ready(function(){
 	});
 	//数据库pager
 	$('#dg-Database').datagrid('getPager').pagination({
+		pageSize: pageSize,
+		pageList: [30,60,90,120,150,200,500],
+		onBeforeRefresh:function(pageNumber, pageSize){
+			$(this).pagination('loading');
+			$(this).pagination('loaded');
+		}
+	});
+	
+	//功能分组window
+	$('#window-Group').window({
+		title:'功能分组',
+		width:315, 
+		height:175,
+		minimizable:false,
+		maximizable:false,
+		collapsible:false,
+		modal:true,
+		resizable:false,
+		closed:true
+	}); 
+	//功能分组toolbar
+	var groupToolbar = [{
+		text:'创建',
+		iconCls:'icon-add',
+		handler:function(){
+			typeCmd = '1';
+			$('#window-Group').window('open');
+			$('#txtGroupName').val('');
+			$('#txtGroupBewrite').val('');
+		}
+	},{
+		text:'编辑',
+		iconCls:'icon-edit',
+		handler:function(){
+			var row = $('#dg-Group').datagrid('getSelected');
+			if(row == null){
+				Port.ShowMsg('请选择要编辑的功能分组信息！');
+				return;
+			}
+			typeCmd = '2';
+			$('#window-Group').window('open');
+			$('#txtGroupName').val(row.Name);
+			$('#txtGroupBewrite').val(row.Bewrite);
+		}
+	},{
+		text:'移除',
+		iconCls:'icon-remove',
+		handler:function(){
+			Port.DelGroup();
+		}
+	}];
+	//功能分组grid
+	$('#dg-Group').datagrid({
+		title:'功能分组',
+		url:'/Group/GetPageGroup',
+		queryParams: {
+			projectCode:projectCode,
+			databaseCode:databaseCode,
+			query:query
+		},
+		pageSize:pageSize,
+		pagination: true,
+		rownumbers: true,
+		fitColumns: true,
+		singleSelect: true,
+		remoteSort:false,
+		fit: true,
+		border: false,            
+		striped: true,
+		toolbar:groupToolbar,		
+		columns:[[
+			{field:'Name',title: '分组名称',width: 50,sortable:true},
+			{field:'Bewrite',title: '描述',width: 50},
+			{field:'Author',title: '作者',width: 50,hidden:true},
+			{field:'CreateTime',title: '创建时间',width: 160,sortable:true,hidden:true}
+		]],
+		onClickRow:function(rowIndex, rowData){
+			index = rowIndex;//获取选中行
+			groupCode = rowData.Code;
+			if(databaseCode != ''){
+				$('#tabs-Project').tabs('enableTab', 3);
+				//表grid
+				$('#dg-Tables').datagrid('load',{
+					databaseCode:databaseCode,
+					groupCode:groupCode,
+					query:query
+				});
+				//清空字段grid
+				$('#dg-Column').datagrid('loadData', { total: 0, rows: [] });
+			}
+		}
+	});
+	//功能分组pager
+	$('#dg-Group').datagrid('getPager').pagination({
 		pageSize: pageSize,
 		pageList: [30,60,90,120,150,200,500],
 		onBeforeRefresh:function(pageNumber, pageSize){
@@ -809,6 +811,12 @@ $(document).ready(function(){
 					$('#tabs-Project').tabs('disableTab', 2);	
 					$('#tabs-Project').tabs('disableTab', 3);
 				break;
+				case '数据库':
+					groupCode='';//清空功能分组编码
+					tablesCode='';//清空表编码
+					$('#tabs-Project').tabs('disableTab', 2);	
+					$('#tabs-Project').tabs('disableTab', 3);
+				break;
 				case '表字段':
 					if(copyTablesCodes != ''){
 						$('#tables-paste').linkbutton('enable');
@@ -884,6 +892,14 @@ var Port = {
 						if (!json.HasError) {
 							$('#dg-Project').datagrid('deleteRow', index);
 							$("#window-Project").window("close");
+							//隐藏选项卡
+							tablesCode='';//清空表编码
+							databaseCode='';//清空数据库编码
+							groupCode='';//清空功能分组编码
+							$('#dg-Project').datagrid('unselectAll');
+							$('#tabs-Project').tabs('disableTab', 1);	
+							$('#tabs-Project').tabs('disableTab', 2);	
+							$('#tabs-Project').tabs('disableTab', 3);
 						} else {
 							$.messager.alert('提示',json.msg,'warning');
 						}
@@ -1028,11 +1044,11 @@ var Port = {
 		}
 		var parms;
 		if(typeCmd == '1'){//新增
-			parms = { name: $("#txtGroupName").val(), bewrite: $("#txtGroupBewrite").val(), projectCode: projectCode};
+			parms = { name: $("#txtGroupName").val(), bewrite: $("#txtGroupBewrite").val(), projectCode: projectCode, databaseCode:databaseCode };
 		}
 		if(typeCmd == '2'){//修改
 			var row = $('#dg-Group').datagrid('getSelected');
-			parms = { code: row.Code, name: $("#txtGroupName").val(), bewrite: $("#txtGroupBewrite").val(), projectCode: projectCode};
+			parms = { code: row.Code, name: $("#txtGroupName").val(), bewrite: $("#txtGroupBewrite").val(), projectCode: projectCode, databaseCode:databaseCode };
 		}
 		$.ajax({
 			url: '/Group/SaveGroup',
@@ -1081,6 +1097,8 @@ var Port = {
 						if (!json.HasError) {
 							$('#dg-Group').datagrid('deleteRow', index);
 							$("#window-Group").window("close");
+							//隐藏选项卡
+							$('#tabs-Project').tabs('disableTab', 3);
 						} else {
 							$.messager.alert('提示',json.msg,'warning');
 						}
@@ -1412,7 +1430,7 @@ var Port = {
 		}
 	},
 	TableIcon:function(value){//表图标
-		return '<img src="../Content/Images/grid.png" border="0" align="absmiddle"> '+value;
+		return '<img src="/Content/Images/grid.png" border="0" align="absmiddle"> '+value;
 	},
 	ShowMsg:function(msg){
 		$.messager.show({

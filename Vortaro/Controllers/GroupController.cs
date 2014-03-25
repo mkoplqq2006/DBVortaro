@@ -25,7 +25,8 @@ namespace Vortaro.Controllers
             //每页的开始记录  第一页为1  第二页为number +1   
             int start = (intPage - 1) * pageSize;
             string projectCode = Params["projectCode"];
-            Response.Write(DGroup.GetPageGroup(start, pageSize, "", projectCode));
+            string databaseCode = Params["databaseCode"];
+            Response.Write(DGroup.GetPageGroup(start, pageSize, "", projectCode, databaseCode));
             Response.End();
         }
         //保存功能分组信息
@@ -37,6 +38,7 @@ namespace Vortaro.Controllers
             group.Name = Params["name"];
             group.Bewrite = Params["bewrite"];
             group.ProjectCode = new Guid(Params["projectCode"]);
+            group.DatabaseCode = new Guid(Params["databaseCode"]);
             string result = string.Empty;
             if (Params["code"] != null)
             {

@@ -19,8 +19,9 @@ namespace Vortaro.Controllers.DAL
         /// <param name="pageSize">结束</param>
         /// <param name="query">条件</param>
         /// <param name="projectCode">项目编码</param>
+        /// <param name="databaseCode">数据库编码</param>
         /// <returns></returns>
-        public static string GetPageGroup(int start, int pageSize, string query, string projectCode)
+        public static string GetPageGroup(int start, int pageSize, string query, string projectCode, string databaseCode)
         {
             //获得当前运行的NHibernate实例
             using (ISession session = NHibernateHelper.GetCurrentSession())
@@ -41,12 +42,16 @@ namespace Vortaro.Controllers.DAL
                         else
                         {
                             criteria.Add(Expression.Eq("ProjectCode", new Guid(projectCode)));
+                            if (!string.IsNullOrEmpty(databaseCode))
+                            {
+                                criteria.Add(Expression.Eq("DatabaseCode", new Guid(databaseCode)));
+                            }
                             if (!String.IsNullOrEmpty(query))
                             {
                                 criteria.Add(Expression.Like("Name", "%" + query + "%"));
                             }
                             count = criteria.SetCacheable(true).List<Group>().Count;
-                            list = criteria.SetCacheable(true).SetFirstResult(start).SetMaxResults(pageSize).AddOrder(Order.Desc("Id")).List<Group>();
+                            list = criteria.SetCacheable(true).SetFirstResult(start).SetMaxResults(pageSize).AddOrder(Order.Asc("Id")).List<Group>();
                         }
                         //提交事务
                         transaction.Commit();

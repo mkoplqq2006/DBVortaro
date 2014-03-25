@@ -23,6 +23,10 @@ namespace VortaroModel
         /// </summary>
         public virtual Guid? ProjectCode { get; set; }
         /// <summary>
+        /// 数据库编码（外键）
+        /// </summary>
+        public virtual Guid? DatabaseCode { get; set; }
+        /// <summary>
         /// 名称
         /// </summary>
         public virtual string Name { get; set; }
