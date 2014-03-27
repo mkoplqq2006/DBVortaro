@@ -1,11 +1,15 @@
 DBVortaro
 =========
 
-.NET 项目数据字典生成器
+.NET 项目数据字典生成器（支持Microsoft SQL Server）
 
 MVC2 + Jquery EasyUI + Nhibernate
 
-欢迎加入QQ交流群：113221278
+<a target="_blank" href="http://shang.qq.com/wpa/qunwpa?idkey=f1328e6397bb800cb06268d5bcd6a9da6197d7211546e8b1b7a6db133e8ef506"><img border="0" src="http://pub.idqqimg.com/wpa/images/group.png" alt="DBVortaro" title="DBVortaro"></a>
+
+2014年3月25日 <br/>
+①添加分组信息与数据库的关联
+②通过级联方式，在删除项目时，同时删除数据库，分组，表以及字段信息
 
 2014年1月6日 <br/>
 ①创建列字段批量删除功能。<br/>

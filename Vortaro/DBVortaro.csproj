@@ -452,6 +452,8 @@
     <Content Include="Content\Templates\templates\index.js" />
     <Content Include="Content\Templates\templates\Items\items.html" />
     <Content Include="Content\Templates\templates\Items\items.js" />
+    <Content Include="Install\2014年3月25日\Vortaro2014年3月25日.sql" />
+    <Content Include="Install\2014年3月25日\关系图.jpg" />
     <Content Include="Install\Vortaro.sql" />
     <Content Include="Install\关系图.jpg" />
     <Content Include="Web.config">
