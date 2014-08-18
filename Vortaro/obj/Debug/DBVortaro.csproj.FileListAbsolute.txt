@@ -52,3 +52,21 @@ E:\2013项目\数据字典\DBVortaro\Vortaro\bin\VortaroModel.pdb
 E:\2013项目\数据字典\DBVortaro\Vortaro\obj\Debug\ResolveAssemblyReference.cache
 E:\2013项目\数据字典\DBVortaro\Vortaro\obj\Debug\Vortaro.dll
 E:\2013项目\数据字典\DBVortaro\Vortaro\obj\Debug\Vortaro.pdb
+D:\Documents\Visual Studio 2012\Projects\DBVortaro\Vortaro\bin\Vortaro.dll
+D:\Documents\Visual Studio 2012\Projects\DBVortaro\Vortaro\bin\Vortaro.pdb
+D:\Documents\Visual Studio 2012\Projects\DBVortaro\Vortaro\bin\ICSharpCode.SharpZipLib.dll
+D:\Documents\Visual Studio 2012\Projects\DBVortaro\Vortaro\bin\Iesi.Collections.dll
+D:\Documents\Visual Studio 2012\Projects\DBVortaro\Vortaro\bin\log4net.dll
+D:\Documents\Visual Studio 2012\Projects\DBVortaro\Vortaro\bin\Newtonsoft.Json.dll
+D:\Documents\Visual Studio 2012\Projects\DBVortaro\Vortaro\bin\NHibernate.dll
+D:\Documents\Visual Studio 2012\Projects\DBVortaro\Vortaro\bin\NPOI.DDF.dll
+D:\Documents\Visual Studio 2012\Projects\DBVortaro\Vortaro\bin\NPOI.dll
+D:\Documents\Visual Studio 2012\Projects\DBVortaro\Vortaro\bin\NPOI.HPSF.dll
+D:\Documents\Visual Studio 2012\Projects\DBVortaro\Vortaro\bin\NPOI.HSSF.dll
+D:\Documents\Visual Studio 2012\Projects\DBVortaro\Vortaro\bin\NPOI.POIFS.dll
+D:\Documents\Visual Studio 2012\Projects\DBVortaro\Vortaro\bin\NPOI.Util.dll
+D:\Documents\Visual Studio 2012\Projects\DBVortaro\Vortaro\bin\VortaroModel.dll
+D:\Documents\Visual Studio 2012\Projects\DBVortaro\Vortaro\bin\VortaroModel.pdb
+D:\Documents\Visual Studio 2012\Projects\DBVortaro\Vortaro\obj\Debug\DBVortaro.csprojResolveAssemblyReference.cache
+D:\Documents\Visual Studio 2012\Projects\DBVortaro\Vortaro\obj\Debug\Vortaro.dll
+D:\Documents\Visual Studio 2012\Projects\DBVortaro\Vortaro\obj\Debug\Vortaro.pdb
