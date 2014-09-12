@@ -18,6 +18,7 @@
     </id>
     <property name="Id" column="Id" insert="false" update="false"/>
     <property name="ProjectCode" column="ProjectCode" />
+    <property name="DatabaseCode" column="DatabaseCode" />
     <property name="Name" column="Name" />
     <property name="Bewrite" column="Bewrite" />
     <property name="Author" column="Author" />
