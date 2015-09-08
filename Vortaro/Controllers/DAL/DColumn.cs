@@ -140,12 +140,12 @@ namespace Vortaro.Controllers.DAL
         /// <returns></returns>
         public static DataTable GetTableColumn(string tableName, string connection)
         {
-            string Sql = string.Format(@"select A.ORDINAL_POSITION as ordinalPosition,A.TABLE_SCHEMA as [owner],B.Name as columnsName,A.DATA_TYPE as columnType,A.CHARACTER_MAXIMUM_LENGTH as typeLength,
+            string Sql = string.Format(@"select A.ORDINAL_POSITION as ordinalPosition,A.TABLE_SCHEMA as [owner],B.COLUMN_NAME as columnsName,A.DATA_TYPE as columnType,A.CHARACTER_MAXIMUM_LENGTH as typeLength,
             A.column_default as defaultsetting,A.is_nullable as isnullable,C.value as remark 
             from information_schema.columns A
             left join sys.extended_properties C on A.ORDINAL_POSITION=C.minor_id and C.major_id=object_id('{0}')
             left join sys.columns B on B.column_id=A.ORDINAL_POSITION and B.object_id=object_id('{0}')
-            where B.Name is not null and A.table_name='{0}' order by ordinalPosition asc", tableName);
+            where A.table_name='{0}' order by ordinalPosition asc", tableName);
             return SQLHelper.GetDataTable(connection, Sql);
         }
         /// <summary>
