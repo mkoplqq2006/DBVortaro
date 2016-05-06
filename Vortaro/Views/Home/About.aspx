@@ -18,7 +18,7 @@
         2、DBVortaro有幸被用于管理您的数据字典，请您联系我，我将在DBVortaro后期版本中展示您项目/企业的LOGO，用于提高您项目/企业的知名度。<br/><br/>
         作者：张德兵<br/>
         腾讯微博：<a href="http://t.qq.com/zhangdebing" target="_blank">zhangdebing</a><br/><br/>
-        <img alt="捐赠共勉" src='http://www.zdbko.com/zfb.png' border="0" width="121" height="121" /><br/>
+        <img alt="捐赠共勉" src='http://img.blog.csdn.net/20151230135834650' border="0"/><br/>
         </p>
     </div>
 </asp:Content>
