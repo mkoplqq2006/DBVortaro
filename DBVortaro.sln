@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DBVortaro", "Vortaro\DBVortaro.csproj", "{B6862577-E8BC-4222-A620-9F8C289BD991}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VortaroModel", "VortaroModel\VortaroModel.csproj", "{71E55D13-A7AB-4A00-9D1C-64AF7DCCACDA}"

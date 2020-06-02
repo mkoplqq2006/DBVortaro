@@ -1,0 +1,46 @@
+译文
+要将现有的ASP.NET MVC2项目手动升级到ASP.NET MVC3（RC），我们需要如下这些步骤：
+
+ 
+
+1. 随便创建一个新的ASP.NET MVC3项目，我们在升级中将用到其中包含的一些文件。
+
+ 
+
+2. 从新建项目中将如下这些文件copy到现有的ASP.NET MVC2项目中，它们是：
+
+· /Scripts/jquery.unobtrusive-ajax.js
+
+· /Scripts/jquery.unobtrusive-ajax.min.js
+
+· /Scripts/jquery.validate.unobtrusive.js
+
+· /Scripts/jquery.validate.unobtrusive.min.js
+
+· /Views/Web.config
+
+ 
+
+3. 如果你现有的ASP.NET MVC2项目中包含若干area，则需要将/Views/Web.config文件copy到所有的area下替换原文件。
+
+ 
+
+4 在项目的Web.config文件中（根目录下的Web.config中有三处，Views文件夹下的Web.config文件中有4处）分别搜索和替换如下内容：
+
+System.Web.Mvc, Version=2.0.0.0 → System.Web.Mvc, Version=3.0.0.0
+
+ 
+
+5. 在解决方案浏览器中删除System.Web.Mvc的引用（因为这里引用的是ASP.NET MVC2中大的DLL）然后添加一个System.Web.Mvc (v3.0.0.0)的引用。接下来再分别引用System.WebPages.dll和System.Web.Helpers.dll。
+
+ 
+
+6. 在解决方案浏览器中鼠标右击项目名称，并选择卸载项目。接着再次右击项目名称然后选择编辑ProjectName.csproj。
+
+ 
+
+7. 在ProjectName.csproj中找到ProjectTypeGuids节点，将 {F85E285D-A4E0-4152-9332-AB1D724D3325}替换为{E53F8FEA-EAE0-44A6-8774-FFD645390401}。
+
+ 
+
+8. 保存第7步中的更改后右击项目，重新加载它。

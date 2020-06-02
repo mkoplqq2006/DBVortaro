@@ -23,3 +23,7 @@ E:\2013项目\数据字典\DBVortaro\VortaroModel\bin\Debug\VortaroModel.pdb
 E:\2013项目\数据字典\DBVortaro\VortaroModel\obj\Debug\ResolveAssemblyReference.cache
 E:\2013项目\数据字典\DBVortaro\VortaroModel\obj\Debug\VortaroModel.dll
 E:\2013项目\数据字典\DBVortaro\VortaroModel\obj\Debug\VortaroModel.pdb
+D:\Documents\Visual Studio 2012\Projects\DBVortaro\VortaroModel\bin\Debug\VortaroModel.dll
+D:\Documents\Visual Studio 2012\Projects\DBVortaro\VortaroModel\bin\Debug\VortaroModel.pdb
+D:\Documents\Visual Studio 2012\Projects\DBVortaro\VortaroModel\obj\Debug\VortaroModel.dll
+D:\Documents\Visual Studio 2012\Projects\DBVortaro\VortaroModel\obj\Debug\VortaroModel.pdb
